@@ -2227,6 +2227,9 @@
             const [contextProfile, setContextProfile] = useState(null);
             const [isDeleteProfileModalOpen, setIsDeleteProfileModalOpen] = useState(false);
             const [profileActionError, setProfileActionError] = useState('');
+            const [profileUploadPreview, setProfileUploadPreview] = useState('');
+            const [isProfilePhotoUploading, setIsProfilePhotoUploading] = useState(false);
+            const [profileUploadError, setProfileUploadError] = useState('');
             const [selectedCategory, setSelectedCategory] = React.useState(null);
             const [contextMenuOpen, setContextMenuOpen] = useState(false);
             const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
@@ -2308,6 +2311,7 @@ const getInitialCatFormData = () => ({
                 puntuaciones: createZeroScores()
             });
             const [formData, setFormData] = useState(getEmptyProfileFormData);
+            const profilePreviewUrl = profileUploadPreview || (Array.isArray(formData.fotos) ? formData.fotos[0] : '');
             useEffect(() => {
                 if (!selectedBattleScope) {
                     if (selectedBattleGroupKey) setSelectedBattleGroupKey('');
@@ -2349,6 +2353,9 @@ const getInitialCatFormData = () => ({
                 }
                 setFormData(mapProfileToFormData(contextProfile));
                 setEditingId(contextProfile.firebaseId || contextProfile.id || null);
+                setProfileUploadPreview('');
+                setProfileUploadError('');
+                setIsProfilePhotoUploading(false);
                 setIsModalOpen(true);
             };
             const openProfileGalleryFromTooltip = (profile = {}) => {
@@ -2382,6 +2389,9 @@ const getInitialCatFormData = () => ({
                     ...getEmptyProfileFormData(),
                     profesion: normalizedProfession
                 });
+                setProfileUploadPreview('');
+                setProfileUploadError('');
+                setIsProfilePhotoUploading(false);
                 setIsModalOpen(true);
             };
             const profileCompletionRows = useMemo(() => {
@@ -3781,6 +3791,30 @@ const getInitialCatFormData = () => ({
                 if (activeGalleryBucket && isGalleryBucketMode) return activeGalleryBucket.nombre;
                 return currentGalleryModeLabel;
             }, [galleryViewMode, selectedCharacterBuckets, activeGalleryBucket, isGalleryBucketMode, currentGalleryModeLabel]);
+
+            const handleProfilePhotoFileUpload = async (event) => {
+                const input = event.target;
+                const file = input?.files?.[0];
+                if (!file || isProfilePhotoUploading) return;
+
+                setProfileUploadError('');
+                setIsProfilePhotoUploading(true);
+                try {
+                    const previewUrl = await readFileAsDataUrl(file);
+                    setProfileUploadPreview(previewUrl);
+                    const uploadFolder = `perfiles/${editingId || 'nuevo-perfil'}/avatar`;
+                    const uploadedUrl = await uploadFileToFirebaseStorage(file, uploadFolder);
+                    setFormData(prev => withProfilePhotoSyncedToGallery(prev, uploadedUrl));
+                    setProfileUploadPreview('');
+                } catch (error) {
+                    console.error('No se pudo subir la foto de perfil:', error);
+                    setProfileUploadPreview('');
+                    setProfileUploadError(error?.message || 'No se pudo subir la foto desde la PC. Probá de nuevo.');
+                } finally {
+                    setIsProfilePhotoUploading(false);
+                    if (input) input.value = '';
+                }
+            };
 
 const saveProfile = async (e) => {
                 e.preventDefault();
@@ -7267,12 +7301,17 @@ const saveProfile = async (e) => {
 
             {/* CUADRO VISTA PREVIA NEÓN */}
             <div className="w-48 h-60 rounded-2xl border-2 border-cyan-500 shadow-[0_0_20px_rgba(34,211,238,0.4)] overflow-hidden bg-slate-900 flex items-center justify-center relative group">
-                {formData.fotos.length > 0 && formData.fotos[0] !== "" ? (
-                    <img src={getSafeImageSrc(formData.fotos[0], CRYING_EMOJI_FALLBACK)} className="w-full h-full object-cover" alt="Preview" onError={applyCryingEmojiFallback} />
+                {profilePreviewUrl ? (
+                    <img src={getSafeImageSrc(profilePreviewUrl, CRYING_EMOJI_FALLBACK)} className="w-full h-full object-cover" alt="Preview" onError={applyCryingEmojiFallback} />
                 ) : (
                     <div className="text-center p-4">
                         <LucideIcon name="image" size={32} className="mx-auto text-slate-700 mb-2" />
                         <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Vista Previa</p>
+                    </div>
+                )}
+                {isProfilePhotoUploading && (
+                    <div className="absolute inset-x-0 bottom-0 bg-cyan-950/85 px-3 py-2 text-center text-[9px] font-black uppercase tracking-widest text-cyan-100">
+                        Subiendo foto...
                     </div>
                 )}
             </div>
@@ -7319,8 +7358,28 @@ const saveProfile = async (e) => {
                         placeholder="https://imagen.com/foto.jpg"
                         className="w-full theme-surface-soft border theme-border-secondary p-5 rounded-xl outline-none focus:ring-2 focus:ring-[var(--glow-gold)] text-white font-bold text-xs"
                         value={formData.fotos[0] || ''}
-                        onChange={e => setFormData(prev => withProfilePhotoSyncedToGallery(prev, e.target.value))}
+                        onChange={e => {
+                            setProfileUploadPreview('');
+                            setProfileUploadError('');
+                            setFormData(prev => withProfilePhotoSyncedToGallery(prev, e.target.value));
+                        }}
                     />
+                    <label className={`mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-cyan-100 transition hover:bg-cyan-500/20 ${isProfilePhotoUploading ? 'pointer-events-none opacity-60' : ''}`}>
+                        <LucideIcon name="upload" size={14} />
+                        {isProfilePhotoUploading ? 'Subiendo desde PC...' : 'Subir desde PC'}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            disabled={isProfilePhotoUploading}
+                            onChange={handleProfilePhotoFileUpload}
+                        />
+                    </label>
+                    {profileUploadError && (
+                        <p className="mt-2 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-[10px] font-bold text-red-200">
+                            {profileUploadError}
+                        </p>
+                    )}
                 </div>
 
                 <div className="space-y-1">
@@ -7368,10 +7427,12 @@ const saveProfile = async (e) => {
                                                 <LucideIcon name="trash-2" size={20} />
                                             </button>
                                         )}
-                                        <button type="submit" disabled={isSavingProfile} className="btn-metal btn-metal--gold flex-1 py-8 rounded-xl text-xs disabled:cursor-not-allowed disabled:opacity-60">
-                                            {isSavingProfile
-                                                ? 'Guardando...'
-                                                : (editingId ? 'Actualizar Registro' : 'Guardar Perfil')}
+                                        <button type="submit" disabled={isSavingProfile || isProfilePhotoUploading} className="btn-metal btn-metal--gold flex-1 py-8 rounded-xl text-xs disabled:cursor-not-allowed disabled:opacity-60">
+                                            {isProfilePhotoUploading
+                                                ? 'Subiendo foto...'
+                                                : (isSavingProfile
+                                                    ? 'Guardando...'
+                                                    : (editingId ? 'Actualizar Registro' : 'Guardar Perfil'))}
                                         </button>
                                     </div>
                                 </form>
