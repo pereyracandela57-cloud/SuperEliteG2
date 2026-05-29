@@ -2546,6 +2546,21 @@ const getInitialCatFormData = () => ({
                 }
             };
 
+            const normalizeFileForUpload = async (file) => {
+                if (!file) throw new Error('No se encontró el archivo para subir.');
+                if (file instanceof File) return file;
+
+                const canReadFileLikeObject = typeof file.arrayBuffer === 'function';
+                if (!canReadFileLikeObject) {
+                    throw new Error('El navegador no permitió leer el archivo seleccionado. Intentá elegirlo nuevamente.');
+                }
+
+                const buffer = await file.arrayBuffer();
+                const fileName = String(file.name || 'archivo').trim() || 'archivo';
+                const fileType = String(file.type || 'application/octet-stream').trim() || 'application/octet-stream';
+                const lastModified = Number.isFinite(Number(file.lastModified)) ? Number(file.lastModified) : Date.now();
+                return new File([buffer], fileName, { type: fileType, lastModified });
+            };
             const maybeOptimizeImageForUpload = async (file) => {
                 if (!(file instanceof File)) return file;
                 const mimeType = String(file.type || '').toLowerCase();
@@ -2574,7 +2589,7 @@ const getInitialCatFormData = () => ({
                 return new File([blob], `${baseName}.${ext}`, { type: outputType, lastModified: Date.now() });
             };
             const uploadFileToFirebaseStorage = window.uploadFileToFirebaseStorage = async (file, folder = 'galeria') => {
-                if (!file) throw new Error('No se encontró el archivo para subir.');
+                const normalizedFile = await normalizeFileForUpload(file);
                 const safeFolder = String(folder || 'galeria').replace(/[^a-zA-Z0-9/_-]/g, '');
                 try {
                     if (typeof storage?.setMaxUploadRetryTime === 'function') {
@@ -2585,7 +2600,7 @@ const getInitialCatFormData = () => ({
                 let lastError = null;
                 for (let attempt = 1; attempt <= 2; attempt += 1) {
                     try {
-                        const optimizedFile = await maybeOptimizeImageForUpload(file);
+                        const optimizedFile = await maybeOptimizeImageForUpload(normalizedFile);
                         const extension = (optimizedFile.name || '').split('.').pop();
                         const sanitizedExt = extension && extension !== optimizedFile.name ? `.${extension.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}` : '';
                         const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
