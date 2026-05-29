@@ -1446,7 +1446,7 @@
                         <button type="button" class="gallery-metal-btn gallery-metal-btn--file" onclick="openGalleryFilePicker()">
                             <span>Agregar Archivo</span>
                         </button>
-                        <input id="galleryHeaderFileInput" type="file" accept="image/*,video/*" style="display:none" onchange="addGalleryFileFromHeader(event)" />
+                        <input id="galleryHeaderFileInput" type="file" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.avif,.heic,.heif,.bmp,.tif,.tiff,.svg,video/*" style="display:none" onchange="addGalleryFileFromHeader(event)" />
                     </div>
                 </div>
 
@@ -1691,6 +1691,20 @@
                         if (input) input.click();
                     }
 
+                    var acceptedGalleryImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'heic', 'heif', 'bmp', 'tif', 'tiff', 'svg'];
+
+                    function getGalleryFileExtension(file) {
+                        var fileName = String((file && file.name) || '').toLowerCase();
+                        var extensionMatch = fileName.match(/\\.([a-z0-9]+)$/);
+                        return extensionMatch ? extensionMatch[1] : '';
+                    }
+
+                    function isAcceptedGalleryImageFile(file) {
+                        var mimeType = String((file && file.type) || '').toLowerCase();
+                        if (mimeType) return mimeType.indexOf('image/') === 0;
+                        return acceptedGalleryImageExtensions.indexOf(getGalleryFileExtension(file)) !== -1;
+                    }
+
                     async function addGalleryFileFromHeader(event) {
                         var input = event && event.target;
                         var file = input && input.files && input.files[0];
@@ -1702,8 +1716,14 @@
                                 window.alert('No se pudo conectar con el cargador de archivos. Volvé a abrir la galería e intentá nuevamente.');
                                 return;
                             }
+                            var fileMimeType = String(file.type || '').toLowerCase();
+                            var isVideoFile = fileMimeType.indexOf('video/') === 0;
+                            if (!isVideoFile && !isAcceptedGalleryImageFile(file)) {
+                                window.alert('Seleccioná un archivo de imagen válido (JPG, PNG, GIF, WEBP, AVIF, HEIC, BMP, TIFF o SVG).');
+                                return;
+                            }
                             if (fileButton) fileButton.textContent = 'Subiendo...';
-                            var mediaType = String(file.type || '').toLowerCase().indexOf('video/') === 0 ? 'video' : 'image';
+                            var mediaType = isVideoFile ? 'video' : 'image';
                             var folderId = (galleryProfileId || 'anonimo').replace(/[^a-zA-Z0-9_-]/g, '');
                             var uploadedUrl = await window.opener.uploadFileToFirebaseStorage(file, 'galeria/' + (folderId || 'anonimo'));
                             window.opener.postMessage({
@@ -2222,6 +2242,8 @@
             const [isModalOpen, setIsModalOpen] = useState(false);
             const [isCatModalOpen, setIsCatModalOpen] = useState(false);
             const [isSavingProfile, setIsSavingProfile] = useState(false);
+            const [isUploadingProfileImage, setIsUploadingProfileImage] = useState(false);
+            const [profileImageUploadError, setProfileImageUploadError] = useState('');
             const [editingId, setEditingId] = useState(null);
             const [contextMenuProfileId, setContextMenuProfileId] = useState(null);
             const [contextProfile, setContextProfile] = useState(null);
@@ -2352,6 +2374,8 @@ const getInitialCatFormData = () => ({
                     return;
                 }
                 setFormData(mapProfileToFormData(contextProfile));
+                setProfileImageUploadError('');
+                setIsUploadingProfileImage(false);
                 setEditingId(contextProfile.firebaseId || contextProfile.id || null);
                 setProfileUploadPreview('');
                 setProfileUploadError('');
@@ -2385,6 +2409,8 @@ const getInitialCatFormData = () => ({
                 if (activeTab === 'anonimo') return;
                 const normalizedProfession = String(prefilledProfession || '').trim();
                 setEditingId(null);
+                setProfileImageUploadError('');
+                setIsUploadingProfileImage(false);
                 setFormData({
                     ...getEmptyProfileFormData(),
                     profesion: normalizedProfession
@@ -2574,29 +2600,45 @@ const getInitialCatFormData = () => ({
             const maybeOptimizeImageForUpload = async (file) => {
                 if (!(file instanceof File)) return file;
                 const mimeType = String(file.type || '').toLowerCase();
-                if (!mimeType.startsWith('image/') || mimeType === 'image/gif') return file;
+                const optimizableMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+                if (!optimizableMimeTypes.has(mimeType)) return file;
                 if (file.size <= 1_200_000) return file;
 
-                const bitmap = await createImageBitmap(file);
-                const maxDimension = 1920;
-                const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
-                const targetWidth = Math.max(1, Math.round(bitmap.width * scale));
-                const targetHeight = Math.max(1, Math.round(bitmap.height * scale));
-                const canvas = document.createElement('canvas');
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-                const ctx = canvas.getContext('2d', { alpha: false });
-                if (!ctx) return file;
-                ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
+                let bitmap = null;
+                try {
+                    bitmap = await createImageBitmap(file);
+                    const maxDimension = 1920;
+                    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+                    const targetWidth = Math.max(1, Math.round(bitmap.width * scale));
+                    const targetHeight = Math.max(1, Math.round(bitmap.height * scale));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+                    const ctx = canvas.getContext('2d', { alpha: false });
+                    if (!ctx) return file;
+                    ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
 
-                const outputType = mimeType === 'image/png' ? 'image/png' : 'image/jpeg';
-                const outputQuality = outputType === 'image/jpeg' ? 0.82 : undefined;
-                const blob = await new Promise((resolve) => canvas.toBlob(resolve, outputType, outputQuality));
-                if (!blob || blob.size >= file.size) return file;
+                    const outputType = mimeType === 'image/png' || mimeType === 'image/webp' ? mimeType : 'image/jpeg';
+                    const outputQuality = outputType === 'image/jpeg' || outputType === 'image/webp' ? 0.82 : undefined;
+                    const blob = await new Promise((resolve) => canvas.toBlob(resolve, outputType, outputQuality));
+                    if (!blob || blob.size >= file.size) return file;
 
-                const baseName = (file.name || 'archivo').replace(/\.[^.]+$/, '');
-                const ext = outputType === 'image/png' ? 'png' : 'jpg';
-                return new File([blob], `${baseName}.${ext}`, { type: outputType, lastModified: Date.now() });
+                    const baseName = (file.name || 'archivo').replace(/\.[^.]+$/, '');
+                    const extensionByType = {
+                        'image/jpeg': 'jpg',
+                        'image/png': 'png',
+                        'image/webp': 'webp'
+                    };
+                    const ext = extensionByType[outputType] || 'jpg';
+                    return new File([blob], `${baseName}.${ext}`, { type: outputType, lastModified: Date.now() });
+                } catch (error) {
+                    console.warn('No se pudo optimizar, se sube original', error);
+                    return file;
+                } finally {
+                    if (bitmap && typeof bitmap.close === 'function') {
+                        bitmap.close();
+                    }
+                }
             };
             const uploadFileToFirebaseStorage = window.uploadFileToFirebaseStorage = async (file, folder = 'galeria') => {
                 const normalizedFile = await normalizeFileForUpload(file);
@@ -2668,6 +2710,45 @@ const getInitialCatFormData = () => ({
                         fotos: nextGallery
                     }
                 };
+            };
+            const isValidProfileImageFile = (file) => {
+                if (!file) return false;
+                const mimeType = String(file.type || '').toLowerCase();
+                if (mimeType.startsWith('image/')) return true;
+
+                const extension = String(file.name || '').split('.').pop().toLowerCase();
+                return ['heic', 'heif', 'avif', 'webp', 'bmp', 'tif', 'tiff', 'svg', 'jpg', 'jpeg', 'png', 'gif'].includes(extension);
+            };
+            const handleProfileImageFileUpload = async (event) => {
+                const file = event.target.files?.[0];
+                setProfileImageUploadError('');
+
+                if (!file) return;
+                if (!isValidProfileImageFile(file)) {
+                    setProfileImageUploadError('Seleccioná un archivo de imagen válido.');
+                    event.target.value = '';
+                    return;
+                }
+
+                setIsUploadingProfileImage(true);
+                try {
+                    const uploadedUrl = await uploadFileToFirebaseStorage(file, `perfiles/${editingId || 'nuevo'}/fotos`);
+                    const nextProfileData = withProfilePhotoSyncedToGallery(formData, uploadedUrl);
+                    setFormData(nextProfileData);
+
+                    if (editingId) {
+                        await Promise.all([
+                            db.ref(`perfiles/${editingId}/fotos`).set(nextProfileData.fotos),
+                            db.ref(`perfiles/${editingId}/galeria/fotos`).set(nextProfileData.galeria?.fotos || [])
+                        ]);
+                    }
+                } catch (error) {
+                    console.error('No se pudo subir la foto de perfil:', error);
+                    setProfileImageUploadError(error?.message || 'No se pudo subir la foto. Intentá nuevamente.');
+                } finally {
+                    setIsUploadingProfileImage(false);
+                    event.target.value = '';
+                }
             };
             const addAnonymousGalleryItem = async ({ url, label, autor = '', forcedTag = '' }) => {
                 const normalizedUrl = String(url || '').trim();
@@ -7352,32 +7433,39 @@ const saveProfile = async (e) => {
             <div className="grid grid-cols-2 gap-4">
                 <input required placeholder="Nombre Artístico" className="col-span-2 w-full theme-surface-soft border theme-border-secondary p-5 rounded-xl outline-none focus:ring-2 focus:ring-[var(--glow-gold)] text-white font-bold" value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} />
 
-                <div className="col-span-2 space-y-1">
-                    <label className="text-[9px] font-black text-slate-500 ml-4 uppercase">URL de la Foto (Avatar)</label>
+                <div className="col-span-2 space-y-3">
+                    <label className="text-[9px] font-black text-slate-500 ml-4 uppercase">Foto (Avatar)</label>
                     <input
                         placeholder="https://imagen.com/foto.jpg"
                         className="w-full theme-surface-soft border theme-border-secondary p-5 rounded-xl outline-none focus:ring-2 focus:ring-[var(--glow-gold)] text-white font-bold text-xs"
                         value={formData.fotos[0] || ''}
                         onChange={e => {
-                            setProfileUploadPreview('');
-                            setProfileUploadError('');
+                            setProfileImageUploadError('');
                             setFormData(prev => withProfilePhotoSyncedToGallery(prev, e.target.value));
                         }}
                     />
-                    <label className={`mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-cyan-100 transition hover:bg-cyan-500/20 ${isProfilePhotoUploading ? 'pointer-events-none opacity-60' : ''}`}>
-                        <LucideIcon name="upload" size={14} />
-                        {isProfilePhotoUploading ? 'Subiendo desde PC...' : 'Subir desde PC'}
-                        <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            disabled={isProfilePhotoUploading}
-                            onChange={handleProfilePhotoFileUpload}
-                        />
-                    </label>
-                    {profileUploadError && (
-                        <p className="mt-2 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-[10px] font-bold text-red-200">
-                            {profileUploadError}
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <label className={`btn-metal btn-metal--cyan inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-4 text-[10px] font-black uppercase tracking-[0.16em] ${isUploadingProfileImage ? 'pointer-events-none opacity-60' : ''}`}>
+                            <LucideIcon name={isUploadingProfileImage ? 'loader-2' : 'upload'} size={16} />
+                            {isUploadingProfileImage ? 'Subiendo foto...' : 'Subir imagen'}
+                            <input
+                                type="file"
+                                className="sr-only"
+                                accept="image/*,.heic,.heif,.avif,.webp,.bmp,.tif,.tiff,.svg"
+                                disabled={isUploadingProfileImage}
+                                onChange={handleProfileImageFileUpload}
+                            />
+                        </label>
+                        <p className="text-[10px] font-bold text-slate-400">Acepta imágenes locales y sincroniza el avatar con la galería.</p>
+                    </div>
+                    {isUploadingProfileImage && (
+                        <p className="rounded-xl border border-cyan-400/30 bg-cyan-950/30 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-200">
+                            Subiendo imagen a Firebase...
+                        </p>
+                    )}
+                    {profileImageUploadError && (
+                        <p className="rounded-xl border border-red-400/30 bg-red-950/30 px-4 py-3 text-xs font-bold text-red-200">
+                            {profileImageUploadError}
                         </p>
                     )}
                 </div>
@@ -7427,12 +7515,10 @@ const saveProfile = async (e) => {
                                                 <LucideIcon name="trash-2" size={20} />
                                             </button>
                                         )}
-                                        <button type="submit" disabled={isSavingProfile || isProfilePhotoUploading} className="btn-metal btn-metal--gold flex-1 py-8 rounded-xl text-xs disabled:cursor-not-allowed disabled:opacity-60">
-                                            {isProfilePhotoUploading
-                                                ? 'Subiendo foto...'
-                                                : (isSavingProfile
-                                                    ? 'Guardando...'
-                                                    : (editingId ? 'Actualizar Registro' : 'Guardar Perfil'))}
+                                        <button type="submit" disabled={isSavingProfile || isUploadingProfileImage} className="btn-metal btn-metal--gold flex-1 py-8 rounded-xl text-xs disabled:cursor-not-allowed disabled:opacity-60">
+                                            {isSavingProfile
+                                                ? 'Guardando...'
+                                                : (isUploadingProfileImage ? 'Esperando subida...' : (editingId ? 'Actualizar Registro' : 'Guardar Perfil'))}
                                         </button>
                                     </div>
                                 </form>
