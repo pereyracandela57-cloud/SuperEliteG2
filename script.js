@@ -2564,29 +2564,45 @@ const getInitialCatFormData = () => ({
             const maybeOptimizeImageForUpload = async (file) => {
                 if (!(file instanceof File)) return file;
                 const mimeType = String(file.type || '').toLowerCase();
-                if (!mimeType.startsWith('image/') || mimeType === 'image/gif') return file;
+                const optimizableMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+                if (!optimizableMimeTypes.has(mimeType)) return file;
                 if (file.size <= 1_200_000) return file;
 
-                const bitmap = await createImageBitmap(file);
-                const maxDimension = 1920;
-                const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
-                const targetWidth = Math.max(1, Math.round(bitmap.width * scale));
-                const targetHeight = Math.max(1, Math.round(bitmap.height * scale));
-                const canvas = document.createElement('canvas');
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-                const ctx = canvas.getContext('2d', { alpha: false });
-                if (!ctx) return file;
-                ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
+                let bitmap = null;
+                try {
+                    bitmap = await createImageBitmap(file);
+                    const maxDimension = 1920;
+                    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+                    const targetWidth = Math.max(1, Math.round(bitmap.width * scale));
+                    const targetHeight = Math.max(1, Math.round(bitmap.height * scale));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+                    const ctx = canvas.getContext('2d', { alpha: false });
+                    if (!ctx) return file;
+                    ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
 
-                const outputType = mimeType === 'image/png' ? 'image/png' : 'image/jpeg';
-                const outputQuality = outputType === 'image/jpeg' ? 0.82 : undefined;
-                const blob = await new Promise((resolve) => canvas.toBlob(resolve, outputType, outputQuality));
-                if (!blob || blob.size >= file.size) return file;
+                    const outputType = mimeType === 'image/png' || mimeType === 'image/webp' ? mimeType : 'image/jpeg';
+                    const outputQuality = outputType === 'image/jpeg' || outputType === 'image/webp' ? 0.82 : undefined;
+                    const blob = await new Promise((resolve) => canvas.toBlob(resolve, outputType, outputQuality));
+                    if (!blob || blob.size >= file.size) return file;
 
-                const baseName = (file.name || 'archivo').replace(/\.[^.]+$/, '');
-                const ext = outputType === 'image/png' ? 'png' : 'jpg';
-                return new File([blob], `${baseName}.${ext}`, { type: outputType, lastModified: Date.now() });
+                    const baseName = (file.name || 'archivo').replace(/\.[^.]+$/, '');
+                    const extensionByType = {
+                        'image/jpeg': 'jpg',
+                        'image/png': 'png',
+                        'image/webp': 'webp'
+                    };
+                    const ext = extensionByType[outputType] || 'jpg';
+                    return new File([blob], `${baseName}.${ext}`, { type: outputType, lastModified: Date.now() });
+                } catch (error) {
+                    console.warn('No se pudo optimizar, se sube original', error);
+                    return file;
+                } finally {
+                    if (bitmap && typeof bitmap.close === 'function') {
+                        bitmap.close();
+                    }
+                }
             };
             const uploadFileToFirebaseStorage = window.uploadFileToFirebaseStorage = async (file, folder = 'galeria') => {
                 const normalizedFile = await normalizeFileForUpload(file);
