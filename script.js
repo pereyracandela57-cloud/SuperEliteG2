@@ -2222,6 +2222,8 @@
             const [isModalOpen, setIsModalOpen] = useState(false);
             const [isCatModalOpen, setIsCatModalOpen] = useState(false);
             const [isSavingProfile, setIsSavingProfile] = useState(false);
+            const [isUploadingProfileImage, setIsUploadingProfileImage] = useState(false);
+            const [profileImageUploadError, setProfileImageUploadError] = useState('');
             const [editingId, setEditingId] = useState(null);
             const [contextMenuProfileId, setContextMenuProfileId] = useState(null);
             const [contextProfile, setContextProfile] = useState(null);
@@ -2348,6 +2350,8 @@ const getInitialCatFormData = () => ({
                     return;
                 }
                 setFormData(mapProfileToFormData(contextProfile));
+                setProfileImageUploadError('');
+                setIsUploadingProfileImage(false);
                 setEditingId(contextProfile.firebaseId || contextProfile.id || null);
                 setIsModalOpen(true);
             };
@@ -2378,6 +2382,8 @@ const getInitialCatFormData = () => ({
                 if (activeTab === 'anonimo') return;
                 const normalizedProfession = String(prefilledProfession || '').trim();
                 setEditingId(null);
+                setProfileImageUploadError('');
+                setIsUploadingProfileImage(false);
                 setFormData({
                     ...getEmptyProfileFormData(),
                     profesion: normalizedProfession
@@ -2658,6 +2664,45 @@ const getInitialCatFormData = () => ({
                         fotos: nextGallery
                     }
                 };
+            };
+            const isValidProfileImageFile = (file) => {
+                if (!file) return false;
+                const mimeType = String(file.type || '').toLowerCase();
+                if (mimeType.startsWith('image/')) return true;
+
+                const extension = String(file.name || '').split('.').pop().toLowerCase();
+                return ['heic', 'heif', 'avif', 'webp', 'bmp', 'tif', 'tiff', 'svg', 'jpg', 'jpeg', 'png', 'gif'].includes(extension);
+            };
+            const handleProfileImageFileUpload = async (event) => {
+                const file = event.target.files?.[0];
+                setProfileImageUploadError('');
+
+                if (!file) return;
+                if (!isValidProfileImageFile(file)) {
+                    setProfileImageUploadError('Seleccioná un archivo de imagen válido.');
+                    event.target.value = '';
+                    return;
+                }
+
+                setIsUploadingProfileImage(true);
+                try {
+                    const uploadedUrl = await uploadFileToFirebaseStorage(file, `perfiles/${editingId || 'nuevo'}/fotos`);
+                    const nextProfileData = withProfilePhotoSyncedToGallery(formData, uploadedUrl);
+                    setFormData(nextProfileData);
+
+                    if (editingId) {
+                        await Promise.all([
+                            db.ref(`perfiles/${editingId}/fotos`).set(nextProfileData.fotos),
+                            db.ref(`perfiles/${editingId}/galeria/fotos`).set(nextProfileData.galeria?.fotos || [])
+                        ]);
+                    }
+                } catch (error) {
+                    console.error('No se pudo subir la foto de perfil:', error);
+                    setProfileImageUploadError(error?.message || 'No se pudo subir la foto. Intentá nuevamente.');
+                } finally {
+                    setIsUploadingProfileImage(false);
+                    event.target.value = '';
+                }
             };
             const addAnonymousGalleryItem = async ({ url, label, autor = '', forcedTag = '' }) => {
                 const normalizedUrl = String(url || '').trim();
@@ -7313,14 +7358,41 @@ const saveProfile = async (e) => {
             <div className="grid grid-cols-2 gap-4">
                 <input required placeholder="Nombre Artístico" className="col-span-2 w-full theme-surface-soft border theme-border-secondary p-5 rounded-xl outline-none focus:ring-2 focus:ring-[var(--glow-gold)] text-white font-bold" value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} />
 
-                <div className="col-span-2 space-y-1">
-                    <label className="text-[9px] font-black text-slate-500 ml-4 uppercase">URL de la Foto (Avatar)</label>
+                <div className="col-span-2 space-y-3">
+                    <label className="text-[9px] font-black text-slate-500 ml-4 uppercase">Foto (Avatar)</label>
                     <input
                         placeholder="https://imagen.com/foto.jpg"
                         className="w-full theme-surface-soft border theme-border-secondary p-5 rounded-xl outline-none focus:ring-2 focus:ring-[var(--glow-gold)] text-white font-bold text-xs"
                         value={formData.fotos[0] || ''}
-                        onChange={e => setFormData(prev => withProfilePhotoSyncedToGallery(prev, e.target.value))}
+                        onChange={e => {
+                            setProfileImageUploadError('');
+                            setFormData(prev => withProfilePhotoSyncedToGallery(prev, e.target.value));
+                        }}
                     />
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <label className={`btn-metal btn-metal--cyan inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-4 text-[10px] font-black uppercase tracking-[0.16em] ${isUploadingProfileImage ? 'pointer-events-none opacity-60' : ''}`}>
+                            <LucideIcon name={isUploadingProfileImage ? 'loader-2' : 'upload'} size={16} />
+                            {isUploadingProfileImage ? 'Subiendo foto...' : 'Subir imagen'}
+                            <input
+                                type="file"
+                                className="sr-only"
+                                accept="image/*,.heic,.heif,.avif,.webp,.bmp,.tif,.tiff,.svg"
+                                disabled={isUploadingProfileImage}
+                                onChange={handleProfileImageFileUpload}
+                            />
+                        </label>
+                        <p className="text-[10px] font-bold text-slate-400">Acepta imágenes locales y sincroniza el avatar con la galería.</p>
+                    </div>
+                    {isUploadingProfileImage && (
+                        <p className="rounded-xl border border-cyan-400/30 bg-cyan-950/30 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-200">
+                            Subiendo imagen a Firebase...
+                        </p>
+                    )}
+                    {profileImageUploadError && (
+                        <p className="rounded-xl border border-red-400/30 bg-red-950/30 px-4 py-3 text-xs font-bold text-red-200">
+                            {profileImageUploadError}
+                        </p>
+                    )}
                 </div>
 
                 <div className="space-y-1">
@@ -7368,10 +7440,10 @@ const saveProfile = async (e) => {
                                                 <LucideIcon name="trash-2" size={20} />
                                             </button>
                                         )}
-                                        <button type="submit" disabled={isSavingProfile} className="btn-metal btn-metal--gold flex-1 py-8 rounded-xl text-xs disabled:cursor-not-allowed disabled:opacity-60">
+                                        <button type="submit" disabled={isSavingProfile || isUploadingProfileImage} className="btn-metal btn-metal--gold flex-1 py-8 rounded-xl text-xs disabled:cursor-not-allowed disabled:opacity-60">
                                             {isSavingProfile
                                                 ? 'Guardando...'
-                                                : (editingId ? 'Actualizar Registro' : 'Guardar Perfil')}
+                                                : (isUploadingProfileImage ? 'Esperando subida...' : (editingId ? 'Actualizar Registro' : 'Guardar Perfil'))}
                                         </button>
                                     </div>
                                 </form>
