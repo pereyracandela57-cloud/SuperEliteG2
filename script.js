@@ -2877,8 +2877,21 @@ const getInitialCatFormData = () => ({
                 if (!activeGalleryProfileId) return;
                 const galleryWindow = galleryWindowRef.current;
                 if (!galleryWindow || galleryWindow.closed) return;
-                if (editingId && editingId === activeGalleryProfileId) return;
-
+                if (editingId && editingId === activeGalleryProfileId) {
+                    renderGalleryWindow({
+                        targetWindow: galleryWindow,
+                        profileName: formData.nombre,
+                        profession: formData.profesion,
+                        photos: [
+                            ...(formData.galeria?.fotos || []).map((item, index) => ({ ...normalizeGalleryItem(item, 'image'), sourceTag: 'fotos', sourceIndex: index })),
+                            ...(formData.galeria?.videos || []).map((item, index) => ({ ...normalizeGalleryItem(item, 'video'), sourceTag: 'videos', sourceIndex: index }))
+                        ],
+                        editingId,
+                        battlePhotoPrefs: formData.batallaFotosPreferidas,
+                        profilePhotoUrl: formData.fotos?.[0] || ''
+                    });
+                    return;
+                }
                 const liveProfile = perfiles.find((profile) => (profile?.firebaseId || profile?.id) === activeGalleryProfileId);
                 if (!liveProfile) return;
 
@@ -2894,7 +2907,7 @@ const getInitialCatFormData = () => ({
                     battlePhotoPrefs: liveProfile?.batallaFotosPreferidas || liveProfile?.galeria?.battlePhotoPreferences || {},
                     profilePhotoUrl: liveProfile?.fotos?.[0] || ''
                 });
-            }, [activeGalleryProfileId, perfiles, editingId]);
+            }, [activeGalleryProfileId, perfiles, editingId, formData.nombre, formData.profesion, formData.galeria?.fotos, formData.galeria?.videos, formData.batallaFotosPreferidas, formData.fotos]);
 
             useEffect(() => {
                 const handleMessage = async (event) => {
@@ -2912,10 +2925,33 @@ const getInitialCatFormData = () => ({
                         const updatedPhotos = [...currentPhotos, { url: normalizedUrl, label: GALLERY_LABELS.includes(label) ? label : '', type: detectGalleryItemType(normalizedUrl, mediaType), autor: '' }];
 
                         await galleryRef.set(updatedPhotos);
+                        const liveSourceProfile = perfiles.find((profile) => (profile?.firebaseId || profile?.id) === id);
+                        const sourceProfile = id === ANON_PROFILE_ID
+                            ? (liveSourceProfile || mapAnonymousGalleryToProfile({ [tag]: updatedPhotos }))
+                            : (editingId === id ? formData : liveSourceProfile) || {};
+                        const updatedGallery = {
+                            ...(sourceProfile?.galeria || {}),
+                            fotos: tag === 'fotos' ? updatedPhotos : (sourceProfile?.galeria?.fotos || []),
+                            videos: tag === 'videos' ? updatedPhotos : (sourceProfile?.galeria?.videos || [])
+                        };
                         setFormData(prev => ({
                             ...prev,
                             galeria: { ...prev.galeria, [tag]: updatedPhotos }
                         }));
+                        if (galleryWindowRef.current && !galleryWindowRef.current.closed) {
+                            renderGalleryWindow({
+                                targetWindow: galleryWindowRef.current,
+                                profileName: sourceProfile?.nombre || formData.nombre || '',
+                                profession: sourceProfile?.profesion || formData.profesion || '',
+                                photos: [
+                                    ...((updatedGallery.fotos || []).map((item, index) => ({ ...normalizeGalleryItem(item, 'image'), sourceTag: 'fotos', sourceIndex: index }))),
+                                    ...((updatedGallery.videos || []).map((item, index) => ({ ...normalizeGalleryItem(item, 'video'), sourceTag: 'videos', sourceIndex: index })))
+                                ],
+                                editingId: id,
+                                battlePhotoPrefs: sourceProfile?.batallaFotosPreferidas || sourceProfile?.galeria?.battlePhotoPreferences || formData.batallaFotosPreferidas || {},
+                                profilePhotoUrl: sourceProfile?.fotos?.[0] || formData.fotos?.[0] || ''
+                            });
+                        }
                     }
 
                     if (event.data.type === 'DELETE_IMAGE') {

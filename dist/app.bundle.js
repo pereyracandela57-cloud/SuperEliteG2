@@ -799,15 +799,15 @@ import{jsxDEV as X,Fragment as SJ}from"react/jsx-dev-runtime";const s1={apiKey:"
                                 aspect-ratio: 1/1;
                                 border-radius: 15px;
                                 overflow: hidden;
-                                border: 2px solid ${c.color};
-                                box-shadow: 0 0 15px ${c.sombra};
+                                border: 2px solid ${s.color};
+                                box-shadow: 0 0 15px ${s.sombra};
                                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                                 cursor: ${aJ(A)==="image"?"grab":"pointer"};
                                 position: relative;
                                 background: #0f172a;
                             "
-                            onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 0 35px ${c.color}, inset 0 0 15px ${c.sombra}'; this.style.zIndex='10';"
-                            onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 15px ${c.sombra}'; this.style.zIndex='1';"
+                            onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 0 35px ${s.color}, inset 0 0 15px ${s.sombra}'; this.style.zIndex='10';"
+                            onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 15px ${s.sombra}'; this.style.zIndex='1';"
                         >
                            <button
                             onclick="event.stopPropagation(); window.opener.postMessage({type: 'DELETE_IMAGE', index: ${A.sourceIndex}, mediaType: '${aJ(A)}', id: '${F}'}, '*');"
