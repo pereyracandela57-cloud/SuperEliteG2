@@ -749,7 +749,7 @@ import{jsxDEV as X,Fragment as SJ}from"react/jsx-dev-runtime";const s1={apiKey:"
                         <button type="button" class="gallery-metal-btn gallery-metal-btn--file" onclick="openGalleryFilePicker()">
                             <span>Agregar Archivo</span>
                         </button>
-                        <input id="galleryHeaderFileInput" type="file" accept="image/*,video/*" style="display:none" onchange="addGalleryFileFromHeader(event)" />
+                        <input id="galleryHeaderFileInput" type="file" accept="image/*,.jpg,.jpeg,.png,.gif,.webp,.avif,.heic,.heif,.bmp,.tif,.tiff,.svg,video/*" style="display:none" onchange="addGalleryFileFromHeader(event)" />
                     </div>
                 </div>
 
@@ -948,6 +948,20 @@ import{jsxDEV as X,Fragment as SJ}from"react/jsx-dev-runtime";const s1={apiKey:"
                         if (input) input.click();
                     }
 
+                    var acceptedGalleryImageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'heic', 'heif', 'bmp', 'tif', 'tiff', 'svg'];
+
+                    function getGalleryFileExtension(file) {
+                        var fileName = String((file && file.name) || '').toLowerCase();
+                        var extensionMatch = fileName.match(/\\.([a-z0-9]+)$/);
+                        return extensionMatch ? extensionMatch[1] : '';
+                    }
+
+                    function isAcceptedGalleryImageFile(file) {
+                        var mimeType = String((file && file.type) || '').toLowerCase();
+                        if (mimeType) return mimeType.indexOf('image/') === 0;
+                        return acceptedGalleryImageExtensions.indexOf(getGalleryFileExtension(file)) !== -1;
+                    }
+
                     async function addGalleryFileFromHeader(event) {
                         var input = event && event.target;
                         var file = input && input.files && input.files[0];
@@ -959,8 +973,14 @@ import{jsxDEV as X,Fragment as SJ}from"react/jsx-dev-runtime";const s1={apiKey:"
                                 window.alert('No se pudo conectar con el cargador de archivos. Volvé a abrir la galería e intentá nuevamente.');
                                 return;
                             }
+                            var fileMimeType = String(file.type || '').toLowerCase();
+                            var isVideoFile = fileMimeType.indexOf('video/') === 0;
+                            if (!isVideoFile && !isAcceptedGalleryImageFile(file)) {
+                                window.alert('Seleccioná un archivo de imagen válido (JPG, PNG, GIF, WEBP, AVIF, HEIC, BMP, TIFF o SVG).');
+                                return;
+                            }
                             if (fileButton) fileButton.textContent = 'Subiendo...';
-                            var mediaType = String(file.type || '').toLowerCase().indexOf('video/') === 0 ? 'video' : 'image';
+                            var mediaType = isVideoFile ? 'video' : 'image';
                             var folderId = (galleryProfileId || 'anonimo').replace(/[^a-zA-Z0-9_-]/g, '');
                             var uploadedUrl = await window.opener.uploadFileToFirebaseStorage(file, 'galeria/' + (folderId || 'anonimo'));
                             window.opener.postMessage({
