@@ -16,6 +16,36 @@ const DATA_URL = 'characters.json';
 const MEDIA_DATA_URL = 'media.json';
 const RATINGS_DATA_URL = 'calificaciones.json';
 const CHARACTERS_API_URL = '/api/characters';
+
+const RATING_TAGS = [
+    { id: 'facciones', label: 'Facciones' },
+    { id: 'ojos', label: 'Ojos' },
+    { id: 'boca', label: 'Boca' },
+    { id: 'cabello', label: 'Cabello' },
+    { id: 'cuerpo', label: 'Cuerpo' },
+    { id: 'cintura', label: 'Cintura' },
+    { id: 'pechos', label: 'Pechos' },
+    { id: 'cola', label: 'Cola' },
+    { id: 'piernas', label: 'Piernas' },
+    { id: 'altura', label: 'Altura' },
+    { id: 'elegancia', label: 'Elegancia', aliases: ['Elgancia'] },
+    { id: 'talento', label: 'Talento' },
+    { id: 'carisma', label: 'Carisma' },
+    { id: 'dulzura', label: 'Dulzura' },
+    { id: 'sensualidad', label: 'Sensualidad' },
+];
+
+const RATING_GROUPS = [
+    { id: 'rostro', label: 'Grupo Rostro', tags: ['facciones', 'ojos', 'boca', 'cabello'] },
+    { id: 'fisico', label: 'Grupo Físico', tags: ['cuerpo', 'cintura', 'pechos', 'cola', 'piernas', 'altura'] },
+    { id: 'actitud', label: 'Grupo Actitud', tags: ['elegancia', 'talento', 'carisma', 'dulzura', 'sensualidad'] },
+];
+
+const RANKING_OPTIONS = [
+    { type: 'general', id: 'general', label: 'Puntaje general' },
+    ...RATING_GROUPS.map(group => ({ type: 'group', id: group.id, label: group.label })),
+    ...RATING_TAGS.map(tag => ({ type: 'tag', id: tag.id, label: tag.label })),
+];
 const fallbackPhoto = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
         <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#334155"/><stop offset="1" stop-color="#020617"/></linearGradient></defs>
@@ -83,16 +113,62 @@ async function loadRatingsFromJson() {
     }
 }
 
-function getRatingAverage(ratings = {}) {
-    const values = Object.values(ratings).filter(value => typeof value === 'number' && Number.isFinite(value));
-    if (!values.length) return null;
-    return values.reduce((total, value) => total + value, 0) / values.length;
+function normalizeRatingKey(key = '') {
+    return String(key).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function normalizeRatingValue(value) {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return 0;
+    return Math.min(Math.max(numericValue, 0), 100);
+}
+
+function getRatingTag(tagId) {
+    return RATING_TAGS.find(tag => tag.id === tagId);
+}
+
+function getRatingGroup(groupId) {
+    return RATING_GROUPS.find(group => group.id === groupId);
+}
+
+function getRatingValue(ratingSet = {}, tagId) {
+    const tag = getRatingTag(tagId);
+    if (!tag) return 0;
+
+    const normalizedCandidates = [tag.id, tag.label, ...(tag.aliases || [])].map(normalizeRatingKey);
+    const matchingKey = Object.keys(ratingSet).find(key => normalizedCandidates.includes(normalizeRatingKey(key)));
+    return matchingKey ? normalizeRatingValue(ratingSet[matchingKey]) : 0;
+}
+
+function getGroupRatingAverage(ratingSet = {}, groupId) {
+    const group = getRatingGroup(groupId);
+    if (!group) return 0;
+    const total = group.tags.reduce((sum, tagId) => sum + getRatingValue(ratingSet, tagId), 0);
+    return total / group.tags.length;
+}
+
+function getGeneralRating(ratingSet = {}) {
+    const total = RATING_GROUPS.reduce((sum, group) => sum + getGroupRatingAverage(ratingSet, group.id), 0);
+    return total / RATING_GROUPS.length;
 }
 
 function getCharacterRating(character, ratings) {
     const ratingSet = ratings[character.id] || {};
-    const average = getRatingAverage(ratingSet);
-    return { average, categories: ratingSet };
+    const groups = RATING_GROUPS.reduce((result, group) => ({
+        ...result,
+        [group.id]: getGroupRatingAverage(ratingSet, group.id),
+    }), {});
+    const tags = RATING_TAGS.reduce((result, tag) => ({
+        ...result,
+        [tag.id]: getRatingValue(ratingSet, tag.id),
+    }), {});
+    return { average: getGeneralRating(ratingSet), groups, tags, categories: ratingSet };
+}
+
+function getRankingScoreForOption(rating, option) {
+    if (option.type === 'tag') return rating.tags[option.id] || 0;
+    if (option.type === 'group') return rating.groups[option.id] || 0;
+    return rating.average || 0;
 }
 
 async function loadMediaFromJson() {
@@ -319,7 +395,7 @@ function BattleCard({ character, score, mediaCount, side, onOpenProfile }) {
                     <h3 className="letter-relief texture-text mt-2 text-4xl uppercase">{character.name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <Info label="Puntaje" value={score ? score.toFixed(1) : 'S/C'} />
+                    <Info label="Puntaje" value={Number.isFinite(score) ? score.toFixed(1) : '0.0'} />
                     <Info label="Multimedia" value={mediaCount} />
                 </div>
                 <button onClick={() => onOpenProfile(character.id)} className="metal-button rounded-2xl bg-gradient-to-br from-fuchsia-400 via-purple-600 to-indigo-950 px-5 py-4 font-black">Ver ficha</button>
@@ -348,15 +424,29 @@ function BattlesScreen({ characters, mediaCountByCharacter, ratings, onOpenProfi
 }
 
 function RankingScreen({ characters, mediaCountByCharacter, ratings, onOpenProfile }) {
+    const [rankingOptionId, setRankingOptionId] = useState('general');
+    const selectedOption = RANKING_OPTIONS.find(option => option.id === rankingOptionId) || RANKING_OPTIONS[0];
     const rankedCharacters = characters.map(character => {
-        const rating = getCharacterRating(character, ratings).average;
+        const rating = getCharacterRating(character, ratings);
         const mediaCount = mediaCountByCharacter[character.id] || 0;
-        return { character, rating, mediaCount, score: (rating || 0) * 10 + Math.min(mediaCount, 20) };
-    }).sort((a, b) => b.score - a.score);
+        const score = getRankingScoreForOption(rating, selectedOption);
+        return { character, rating, mediaCount, score };
+    }).sort((a, b) => b.score - a.score || a.character.name.localeCompare(b.character.name));
 
     return (
         <section>
-            <SectionTitle eyebrow="Tabla Elite" title="Ranking" description="Pantalla nueva con el listado ordenado por calificación promedio y actividad multimedia." />
+            <SectionTitle eyebrow="Tabla Elite" title="Ranking" description="Selecciona una etiqueta, un grupo o el puntaje general para reordenar automáticamente a las participantes por esa calificación." />
+            <div className="metal-panel metal-shadow chrome-border mb-6 grid gap-3 rounded-3xl p-5 sm:grid-cols-[1fr_auto]">
+                <div>
+                    <p className="text-sm font-black uppercase tracking-[.25em] text-cyan-200">Filtro de ranking</p>
+                    <p className="mt-1 text-sm font-semibold text-cyan-50/75">Las etiquetas sin calificación en el JSON cuentan como 0. Las puntuaciones se muestran de 0 a 100.</p>
+                </div>
+                <label className="grid gap-2 text-sm font-bold text-zinc-200 sm:min-w-72">Ver top por
+                    <select value={rankingOptionId} onChange={event => setRankingOptionId(event.target.value)} className="rounded-xl border border-white/20 bg-zinc-900 p-3 text-white shadow-inner outline-none focus:border-cyan-300">
+                        {RANKING_OPTIONS.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}
+                    </select>
+                </label>
+            </div>
             {rankedCharacters.length === 0 ? <EmptyState title="Ranking vacío" text="Agrega personajes para crear la tabla de posiciones." /> : (
                 <div className="grid gap-4">
                     {rankedCharacters.map((entry, index) => {
@@ -370,7 +460,7 @@ function RankingScreen({ characters, mediaCountByCharacter, ratings, onOpenProfi
                                     <h3 className="letter-relief texture-text mt-1 text-3xl uppercase">{entry.character.name}</h3>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 sm:min-w-64">
-                                    <Info label="Nota" value={entry.rating ? entry.rating.toFixed(1) : 'S/C'} />
+                                    <Info label={selectedOption.label} value={entry.score.toFixed(1)} />
                                     <Info label="Archivos" value={entry.mediaCount} />
                                 </div>
                             </button>
