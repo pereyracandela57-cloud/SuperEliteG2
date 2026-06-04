@@ -12,6 +12,7 @@ const EMPTY_FORM = {
 };
 
 const STORAGE_KEY = 'supereliteg2-state-v1';
+const DEFAULT_BATTLE_TAGS = ['Facciones', 'Ojos', 'Boca', 'Cabello', 'Cintura', 'Cola', 'Pechos', 'Piernas', 'Cuerpo', 'Talento', 'Carisma', 'Elegancia', 'Sensualidad', 'Dulzura', 'Altura'];
 const DATA_URL = 'characters.json';
 const MEDIA_DATA_URL = 'media.json';
 const RATINGS_DATA_URL = 'calificaciones.json';
@@ -95,6 +96,26 @@ function getCharacterRating(character, ratings) {
     return { average, categories: ratingSet };
 }
 
+function getBattleTags(ratings = {}) {
+    const tags = new Set(DEFAULT_BATTLE_TAGS);
+    Object.values(ratings).forEach(ratingSet => {
+        if (!ratingSet || typeof ratingSet !== 'object') return;
+        Object.entries(ratingSet).forEach(([tag, value]) => {
+            if (typeof value === 'number' && Number.isFinite(value)) tags.add(tag);
+        });
+    });
+    return Array.from(tags);
+}
+
+function getBattlePairKey(firstId, secondId) {
+    return [firstId, secondId].sort().join('::');
+}
+
+function hasBattleResult(battleResults, tag, firstId, secondId) {
+    const pairKey = getBattlePairKey(firstId, secondId);
+    return battleResults.some(result => result.tag === tag && result.pairKey === pairKey);
+}
+
 async function loadMediaFromJson() {
     try {
         const response = await fetch(MEDIA_DATA_URL, { cache: 'no-store' });
@@ -138,6 +159,7 @@ function App() {
     const [characters, setCharacters] = useState([]);
     const [media, setMedia] = useState([]);
     const [ratings, setRatings] = useState({});
+    const [battleResults, setBattleResults] = useState([]);
     const [characterModal, setCharacterModal] = useState(null);
     const [mediaModal, setMediaModal] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -155,6 +177,7 @@ function App() {
             let jsonRatings = {};
             let storedCharacters = [];
             let storedMedia = [];
+            let storedBattleResults = [];
 
             try {
                 jsonCharacters = await loadCharactersFromJson();
@@ -181,6 +204,7 @@ function App() {
                     const parsed = JSON.parse(stored);
                     storedCharacters = parsed.characters || [];
                     storedMedia = parsed.media || [];
+                    storedBattleResults = Array.isArray(parsed.battleResults) ? parsed.battleResults : [];
                 }
             } catch (error) {
                 console.error('No se pudo leer localStorage:', error);
@@ -190,6 +214,7 @@ function App() {
             setCharacters(mergeCharacters(jsonCharacters, storedCharacters));
             setMedia(mergeMedia(jsonMedia, storedMedia));
             setRatings(jsonRatings);
+            setBattleResults(storedBattleResults);
             setIsLoaded(true);
         }
 
@@ -199,8 +224,8 @@ function App() {
 
     useEffect(() => {
         if (!isLoaded) return;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ media }));
-    }, [media, isLoaded]);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ media, battleResults }));
+    }, [media, battleResults, isLoaded]);
 
     const selectedGroup = view.groupId ? getGroup(view.groupId) : null;
     const selectedCharacter = view.characterId ? characters.find(character => character.id === view.characterId) : null;
@@ -259,6 +284,12 @@ function App() {
         setPlayer({ items, title });
     };
     const updatePlaybackSettings = (nextSettings) => setPlaybackSettings(prev => ({ ...prev, ...nextSettings }));
+    const saveBattleResult = ({ tag, winnerId, loserId }) => {
+        setBattleResults(prev => {
+            if (hasBattleResult(prev, tag, winnerId, loserId)) return prev;
+            return [{ id: uid(), tag, winnerId, loserId, pairKey: getBattlePairKey(winnerId, loserId), createdAt: new Date().toISOString() }, ...prev];
+        });
+    };
 
     return (
         <div className="min-h-screen">
@@ -268,7 +299,7 @@ function App() {
                 {persistenceStatus && <div className="metal-panel metal-shadow mb-5 rounded-2xl border border-cyan-400/50 p-4 font-bold text-cyan-100">{persistenceStatus}</div>}
                 {view.page === 'characters' && <GroupsScreen onOpenGroup={(groupId) => navigate({ page: 'group', groupId })} />}
                 {view.page === 'gallery' && <GeneralGallery items={mediaWithCharacters} settings={playbackSettings} onSettingsChange={updatePlaybackSettings} onPlay={() => openPlayer(mediaWithCharacters, 'Galería general')} />}
-                {view.page === 'battles' && <BattlesScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
+                {view.page === 'battles' && <BattlesScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} battleResults={battleResults} onBattleResult={saveBattleResult} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'ranking' && <RankingScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'group' && <GroupScreen group={selectedGroup} characters={groupCharacters} onBack={() => navigate({ page: 'characters' })} onAdd={() => openNewCharacter(selectedGroup.id)} onOpen={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'profile' && selectedCharacter && <ProfileScreen character={selectedCharacter} mediaCount={selectedCharacterMedia.length} onBack={() => navigate({ page: 'group', groupId: selectedCharacter.group })} onGallery={() => navigate({ page: 'characterGallery', characterId: selectedCharacter.id })} onEdit={() => openEditCharacter(selectedCharacter)} onDelete={() => deleteCharacter(selectedCharacter.id)} />}
@@ -305,13 +336,20 @@ function NavButton({ active, onClick, children }) {
     return <button onClick={onClick} className={`metal-button rounded-xl px-4 py-3 font-black transition ${active ? 'bg-gradient-to-br from-cyan-200 via-white to-slate-300 text-zinc-950' : 'bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white hover:bg-white/10'}`}>{children}</button>;
 }
 
-function BattleCard({ character, score, mediaCount, side, onOpenProfile }) {
+function BattleCard({ character, score, mediaCount, tag, onChooseWinner, onOpenProfile }) {
     const group = getGroup(character.group);
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onChooseWinner(character.id);
+        }
+    };
+
     return (
-        <article className={`metal-card metal-shadow illuminated-card overflow-hidden rounded-[2rem] border-2 ${group.border}`}>
+        <article onClick={() => onChooseWinner(character.id)} onKeyDown={handleKeyDown} role="button" tabIndex="0" aria-label={`Dar como ganador a ${character.name} en ${tag}`} className={`metal-card metal-shadow illuminated-card cursor-pointer overflow-hidden rounded-[2rem] border-2 transition hover:-translate-y-1 hover:brightness-110 ${group.border}`}>
             <div className="relative h-80 bg-black/40">
                 <img src={character.photo || fallbackPhoto} alt={character.name} className="h-full w-full object-cover" />
-                <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/65 px-4 py-2 text-sm font-black uppercase tracking-[.25em] text-cyan-100">{side}</span>
+                <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/65 px-4 py-2 text-sm font-black uppercase tracking-[.25em] text-cyan-100">Elegir ganador</span>
             </div>
             <div className="grid gap-4 p-5">
                 <div>
@@ -319,28 +357,71 @@ function BattleCard({ character, score, mediaCount, side, onOpenProfile }) {
                     <h3 className="letter-relief texture-text mt-2 text-4xl uppercase">{character.name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <Info label="Puntaje" value={score ? score.toFixed(1) : 'S/C'} />
+                    <Info label={tag} value={typeof score === 'number' && Number.isFinite(score) ? score.toFixed(1) : 'S/C'} />
                     <Info label="Multimedia" value={mediaCount} />
                 </div>
-                <button onClick={() => onOpenProfile(character.id)} className="metal-button rounded-2xl bg-gradient-to-br from-fuchsia-400 via-purple-600 to-indigo-950 px-5 py-4 font-black">Ver ficha</button>
+                <button onClick={(event) => { event.stopPropagation(); onOpenProfile(character.id); }} className="metal-button rounded-2xl bg-gradient-to-br from-fuchsia-400 via-purple-600 to-indigo-950 px-5 py-4 font-black">Ver ficha</button>
             </div>
         </article>
     );
 }
 
-function BattlesScreen({ characters, mediaCountByCharacter, ratings, onOpenProfile }) {
-    const contenders = characters.slice(0, 2);
+function BattlesScreen({ characters, mediaCountByCharacter, ratings, battleResults, onBattleResult, onOpenProfile }) {
+    const tags = useMemo(() => getBattleTags(ratings), [ratings]);
+    const [selectedTag, setSelectedTag] = useState(tags[0] || 'Facciones');
+
+    useEffect(() => {
+        if (!tags.includes(selectedTag)) setSelectedTag(tags[0] || 'Facciones');
+    }, [tags, selectedTag]);
+
+    const availableBattles = useMemo(() => {
+        const battles = [];
+        for (let firstIndex = 0; firstIndex < characters.length; firstIndex += 1) {
+            for (let secondIndex = firstIndex + 1; secondIndex < characters.length; secondIndex += 1) {
+                const first = characters[firstIndex];
+                const second = characters[secondIndex];
+                if (!hasBattleResult(battleResults, selectedTag, first.id, second.id)) battles.push([first, second]);
+            }
+        }
+        return battles;
+    }, [characters, battleResults, selectedTag]);
+
+    const completedForTag = Math.max(0, (characters.length * (characters.length - 1)) / 2 - availableBattles.length);
+    const contenders = availableBattles[0] || [];
+    const chooseWinner = (winnerId) => {
+        if (contenders.length < 2) return;
+        const loser = contenders.find(character => character.id !== winnerId);
+        if (!loser) return;
+        onBattleResult({ tag: selectedTag, winnerId, loserId: loser.id });
+    };
+
     return (
         <section>
-            <SectionTitle eyebrow="Arena Elite" title="Batallas" description="Pantalla nueva para enfrentar personajes cara a cara y comparar su ficha, multimedia y calificación promedio." />
-            {contenders.length < 2 ? <EmptyState title="Faltan contendientes" text="Agrega al menos dos personajes para preparar una batalla." /> : (
-                <div className="grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-                    <BattleCard character={contenders[0]} side="Contendiente A" score={getCharacterRating(contenders[0], ratings).average} mediaCount={mediaCountByCharacter[contenders[0].id] || 0} onOpenProfile={onOpenProfile} />
-                    <div className="metal-panel metal-shadow chrome-border rounded-full px-8 py-6 text-center">
-                        <p className="cartoon-title text-6xl">VS</p>
-                        <p className="mt-1 text-xs font-black uppercase tracking-[.25em] text-cyan-100/80">Duelo</p>
+            <SectionTitle eyebrow="Arena Elite" title="Batallas" description="Elige una etiqueta y toca la tarjeta del personaje que gana. Esa pareja no volverá a repetirse en la misma etiqueta, pero sí puede competir en las demás." />
+            {characters.length < 2 ? <EmptyState title="Faltan participantes" text="Agrega al menos dos personajes para preparar una batalla." /> : (
+                <div className="grid gap-5">
+                    <div className="metal-panel metal-shadow chrome-border grid gap-4 rounded-3xl p-5 md:grid-cols-[1fr_auto] md:items-end">
+                        <label className="grid gap-2 font-black uppercase tracking-[.2em] text-cyan-100">
+                            Etiqueta de competencia
+                            <select value={selectedTag} onChange={(event) => setSelectedTag(event.target.value)} className="rounded-2xl border border-white/20 bg-slate-950/90 px-4 py-3 text-base font-bold normal-case tracking-normal text-white outline-none focus:border-cyan-300">
+                                {tags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+                            </select>
+                        </label>
+                        <div className="grid grid-cols-2 gap-3 text-center sm:min-w-72">
+                            <Info label="Hechas" value={completedForTag} />
+                            <Info label="Pendientes" value={availableBattles.length} />
+                        </div>
                     </div>
-                    <BattleCard character={contenders[1]} side="Contendiente B" score={getCharacterRating(contenders[1], ratings).average} mediaCount={mediaCountByCharacter[contenders[1].id] || 0} onOpenProfile={onOpenProfile} />
+                    {contenders.length < 2 ? <EmptyState title="Etiqueta completada" text={`Ya se jugaron todas las batallas posibles en ${selectedTag}. Elige otra etiqueta para continuar.`} /> : (
+                        <div className="grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+                            <BattleCard character={contenders[0]} tag={selectedTag} score={(ratings[contenders[0].id] || {})[selectedTag]} mediaCount={mediaCountByCharacter[contenders[0].id] || 0} onChooseWinner={chooseWinner} onOpenProfile={onOpenProfile} />
+                            <div className="metal-panel metal-shadow chrome-border rounded-full px-8 py-6 text-center">
+                                <p className="cartoon-title text-6xl">VS</p>
+                                <p className="mt-1 text-xs font-black uppercase tracking-[.25em] text-cyan-100/80">{selectedTag}</p>
+                            </div>
+                            <BattleCard character={contenders[1]} tag={selectedTag} score={(ratings[contenders[1].id] || {})[selectedTag]} mediaCount={mediaCountByCharacter[contenders[1].id] || 0} onChooseWinner={chooseWinner} onOpenProfile={onOpenProfile} />
+                        </div>
+                    )}
                 </div>
             )}
         </section>
