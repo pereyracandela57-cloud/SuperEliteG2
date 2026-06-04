@@ -14,6 +14,7 @@ const EMPTY_FORM = {
 const STORAGE_KEY = 'supereliteg2-state-v1';
 const DATA_URL = 'characters.json';
 const MEDIA_DATA_URL = 'media.json';
+const RATINGS_DATA_URL = 'calificaciones.json';
 const CHARACTERS_API_URL = '/api/characters';
 const fallbackPhoto = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
@@ -70,6 +71,30 @@ async function loadCharactersFromJson() {
     return Array.isArray(data.characters) ? data.characters : [];
 }
 
+async function loadRatingsFromJson() {
+    try {
+        const response = await fetch(RATINGS_DATA_URL, { cache: 'no-store' });
+        if (!response.ok) return {};
+        const data = await response.json();
+        return data && typeof data === 'object' ? data : {};
+    } catch (error) {
+        console.warn('No se pudo cargar calificaciones.json.', error);
+        return {};
+    }
+}
+
+function getRatingAverage(ratings = {}) {
+    const values = Object.values(ratings).filter(value => typeof value === 'number' && Number.isFinite(value));
+    if (!values.length) return null;
+    return values.reduce((total, value) => total + value, 0) / values.length;
+}
+
+function getCharacterRating(character, ratings) {
+    const ratingSet = ratings[character.id] || {};
+    const average = getRatingAverage(ratingSet);
+    return { average, categories: ratingSet };
+}
+
 async function loadMediaFromJson() {
     try {
         const response = await fetch(MEDIA_DATA_URL, { cache: 'no-store' });
@@ -112,6 +137,7 @@ function App() {
     const [view, setView] = useState({ page: 'characters' });
     const [characters, setCharacters] = useState([]);
     const [media, setMedia] = useState([]);
+    const [ratings, setRatings] = useState({});
     const [characterModal, setCharacterModal] = useState(null);
     const [mediaModal, setMediaModal] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -126,6 +152,7 @@ function App() {
         async function loadInitialState() {
             let jsonCharacters = [];
             let jsonMedia = [];
+            let jsonRatings = {};
             let storedCharacters = [];
             let storedMedia = [];
 
@@ -138,6 +165,12 @@ function App() {
 
             try {
                 jsonMedia = await loadMediaFromJson();
+            } catch (error) {
+                console.error(error);
+            }
+
+            try {
+                jsonRatings = await loadRatingsFromJson();
             } catch (error) {
                 console.error(error);
             }
@@ -156,6 +189,7 @@ function App() {
             if (!isMounted) return;
             setCharacters(mergeCharacters(jsonCharacters, storedCharacters));
             setMedia(mergeMedia(jsonMedia, storedMedia));
+            setRatings(jsonRatings);
             setIsLoaded(true);
         }
 
@@ -173,6 +207,7 @@ function App() {
     const groupCharacters = selectedGroup ? characters.filter(character => character.group === selectedGroup.id) : [];
     const selectedCharacterMedia = selectedCharacter ? media.filter(item => item.characterId === selectedCharacter.id) : [];
     const mediaWithCharacters = useMemo(() => media.map(item => ({ ...item, type: normalizeMediaType(item.type, item.src), character: characters.find(character => character.id === item.characterId) })).filter(item => item.character), [media, characters]);
+    const mediaCountByCharacter = useMemo(() => media.reduce((counts, item) => ({ ...counts, [item.characterId]: (counts[item.characterId] || 0) + 1 }), {}), [media]);
 
     const navigate = (nextView) => setView(nextView);
 
@@ -233,6 +268,8 @@ function App() {
                 {persistenceStatus && <div className="metal-panel metal-shadow mb-5 rounded-2xl border border-cyan-400/50 p-4 font-bold text-cyan-100">{persistenceStatus}</div>}
                 {view.page === 'characters' && <GroupsScreen onOpenGroup={(groupId) => navigate({ page: 'group', groupId })} />}
                 {view.page === 'gallery' && <GeneralGallery items={mediaWithCharacters} settings={playbackSettings} onSettingsChange={updatePlaybackSettings} onPlay={() => openPlayer(mediaWithCharacters, 'Galería general')} />}
+                {view.page === 'battles' && <BattlesScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
+                {view.page === 'ranking' && <RankingScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'group' && <GroupScreen group={selectedGroup} characters={groupCharacters} onBack={() => navigate({ page: 'characters' })} onAdd={() => openNewCharacter(selectedGroup.id)} onOpen={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'profile' && selectedCharacter && <ProfileScreen character={selectedCharacter} mediaCount={selectedCharacterMedia.length} onBack={() => navigate({ page: 'group', groupId: selectedCharacter.group })} onGallery={() => navigate({ page: 'characterGallery', characterId: selectedCharacter.id })} onEdit={() => openEditCharacter(selectedCharacter)} onDelete={() => deleteCharacter(selectedCharacter.id)} />}
                 {view.page === 'characterGallery' && selectedCharacter && <CharacterGallery character={selectedCharacter} items={selectedCharacterMedia} settings={playbackSettings} onSettingsChange={updatePlaybackSettings} onPlay={(items) => openPlayer(items, `Galería de ${selectedCharacter.name}`)} onBack={() => navigate({ page: 'profile', characterId: selectedCharacter.id })} onAdd={() => setMediaModal({ character: selectedCharacter })} />}
@@ -252,12 +289,96 @@ function TopNav({ currentPage, onNavigate }) {
                     <p className="text-xs font-bold uppercase tracking-[.35em] text-cyan-200"></p>
                     <h1 className="cartoon-title text-4xl leading-none sm:text-5xl">SuperEliteG2</h1>
                 </button>
-                <nav className="metal-card metal-shadow grid grid-cols-2 gap-2 rounded-2xl border border-white/20 p-1">
-                    <button onClick={() => onNavigate({ page: 'characters' })} className={`metal-button rounded-xl px-5 py-3 font-black transition ${currentPage !== 'gallery' ? 'bg-gradient-to-br from-cyan-200 via-white to-slate-300 text-zinc-950' : 'bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white hover:bg-white/10'}`}>👥 Personajes</button>
-                    <button onClick={() => onNavigate({ page: 'gallery' })} className={`metal-button rounded-xl px-5 py-3 font-black transition ${currentPage === 'gallery' ? 'bg-gradient-to-br from-cyan-200 via-white to-slate-300 text-zinc-950' : 'bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white hover:bg-white/10'}`}>🖼️ Galería</button>
+                <nav className="metal-card metal-shadow grid grid-cols-2 gap-2 rounded-2xl border border-white/20 p-1 lg:grid-cols-4">
+                    <NavButton active={!['gallery', 'battles', 'ranking'].includes(currentPage)} onClick={() => onNavigate({ page: 'characters' })}>👥 Personajes</NavButton>
+                    <NavButton active={currentPage === 'gallery'} onClick={() => onNavigate({ page: 'gallery' })}>🖼️ Galería</NavButton>
+                    <NavButton active={currentPage === 'battles'} onClick={() => onNavigate({ page: 'battles' })}>⚔️ Batallas</NavButton>
+                    <NavButton active={currentPage === 'ranking'} onClick={() => onNavigate({ page: 'ranking' })}>🏆 Ranking</NavButton>
                 </nav>
             </div>
         </header>
+    );
+}
+
+
+function NavButton({ active, onClick, children }) {
+    return <button onClick={onClick} className={`metal-button rounded-xl px-4 py-3 font-black transition ${active ? 'bg-gradient-to-br from-cyan-200 via-white to-slate-300 text-zinc-950' : 'bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white hover:bg-white/10'}`}>{children}</button>;
+}
+
+function BattleCard({ character, score, mediaCount, side, onOpenProfile }) {
+    const group = getGroup(character.group);
+    return (
+        <article className={`metal-card metal-shadow illuminated-card overflow-hidden rounded-[2rem] border-2 ${group.border}`}>
+            <div className="relative h-80 bg-black/40">
+                <img src={character.photo || fallbackPhoto} alt={character.name} className="h-full w-full object-cover" />
+                <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/65 px-4 py-2 text-sm font-black uppercase tracking-[.25em] text-cyan-100">{side}</span>
+            </div>
+            <div className="grid gap-4 p-5">
+                <div>
+                    <p className="text-sm font-black uppercase tracking-[.25em]" style={{ color: group.color }}>{group.emoji} {group.label}</p>
+                    <h3 className="letter-relief texture-text mt-2 text-4xl uppercase">{character.name}</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                    <Info label="Puntaje" value={score ? score.toFixed(1) : 'S/C'} />
+                    <Info label="Multimedia" value={mediaCount} />
+                </div>
+                <button onClick={() => onOpenProfile(character.id)} className="metal-button rounded-2xl bg-gradient-to-br from-fuchsia-400 via-purple-600 to-indigo-950 px-5 py-4 font-black">Ver ficha</button>
+            </div>
+        </article>
+    );
+}
+
+function BattlesScreen({ characters, mediaCountByCharacter, ratings, onOpenProfile }) {
+    const contenders = characters.slice(0, 2);
+    return (
+        <section>
+            <SectionTitle eyebrow="Arena Elite" title="Batallas" description="Pantalla nueva para enfrentar personajes cara a cara y comparar su ficha, multimedia y calificación promedio." />
+            {contenders.length < 2 ? <EmptyState title="Faltan contendientes" text="Agrega al menos dos personajes para preparar una batalla." /> : (
+                <div className="grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+                    <BattleCard character={contenders[0]} side="Contendiente A" score={getCharacterRating(contenders[0], ratings).average} mediaCount={mediaCountByCharacter[contenders[0].id] || 0} onOpenProfile={onOpenProfile} />
+                    <div className="metal-panel metal-shadow chrome-border rounded-full px-8 py-6 text-center">
+                        <p className="cartoon-title text-6xl">VS</p>
+                        <p className="mt-1 text-xs font-black uppercase tracking-[.25em] text-cyan-100/80">Duelo</p>
+                    </div>
+                    <BattleCard character={contenders[1]} side="Contendiente B" score={getCharacterRating(contenders[1], ratings).average} mediaCount={mediaCountByCharacter[contenders[1].id] || 0} onOpenProfile={onOpenProfile} />
+                </div>
+            )}
+        </section>
+    );
+}
+
+function RankingScreen({ characters, mediaCountByCharacter, ratings, onOpenProfile }) {
+    const rankedCharacters = characters.map(character => {
+        const rating = getCharacterRating(character, ratings).average;
+        const mediaCount = mediaCountByCharacter[character.id] || 0;
+        return { character, rating, mediaCount, score: (rating || 0) * 10 + Math.min(mediaCount, 20) };
+    }).sort((a, b) => b.score - a.score);
+
+    return (
+        <section>
+            <SectionTitle eyebrow="Tabla Elite" title="Ranking" description="Pantalla nueva con el listado ordenado por calificación promedio y actividad multimedia." />
+            {rankedCharacters.length === 0 ? <EmptyState title="Ranking vacío" text="Agrega personajes para crear la tabla de posiciones." /> : (
+                <div className="grid gap-4">
+                    {rankedCharacters.map((entry, index) => {
+                        const group = getGroup(entry.character.group);
+                        return (
+                            <button key={entry.character.id} onClick={() => onOpenProfile(entry.character.id)} className="metal-card metal-shadow illuminated-card grid gap-4 rounded-3xl border border-white/20 p-4 text-left transition hover:-translate-y-1 sm:grid-cols-[auto_96px_1fr_auto] sm:items-center">
+                                <div className="cartoon-title text-5xl">#{index + 1}</div>
+                                <img src={entry.character.photo || fallbackPhoto} alt={entry.character.name} className="h-24 w-24 rounded-2xl object-cover" />
+                                <div>
+                                    <p className="text-xs font-black uppercase tracking-[.25em]" style={{ color: group.color }}>{group.emoji} {group.label}</p>
+                                    <h3 className="letter-relief texture-text mt-1 text-3xl uppercase">{entry.character.name}</h3>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 sm:min-w-64">
+                                    <Info label="Nota" value={entry.rating ? entry.rating.toFixed(1) : 'S/C'} />
+                                    <Info label="Archivos" value={entry.mediaCount} />
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </section>
     );
 }
 
