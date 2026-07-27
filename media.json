@@ -1,124 +1,1312 @@
 {
   "media": [
-    {
+{
+    "id": "m-otras-1",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-2",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-3",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-4",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-5",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-6",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-7",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-8",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-9",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-10",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-11",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-12",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-13",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-14",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (14).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-15",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (15).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-16",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (16).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-17",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (17).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-18",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (18).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-19",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (19).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-20",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (20).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-21",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (21).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-22",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (22).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-23",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (23).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-24",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (24).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-25",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (25).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-26",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (26).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-27",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (27).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-28",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (28).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-29",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (29).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-30",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (30).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-31",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (31).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-32",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (32).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-33",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (33).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-34",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (34).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-35",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (35).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-36",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (36).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-37",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (37).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-38",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (38).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-39",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (39).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-40",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (40).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-41",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (41).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-42",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (42).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-43",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (43).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-44",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (44).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-45",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (45).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-46",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (46).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-47",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (47).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-48",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (48).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-49",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (49).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-50",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (50).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-51",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (51).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-52",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (52).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-53",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (53).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-54",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (54).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-55",
+    "characterId": "otras",
+    "src": "Multimedia/otroj (55).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-otras-56",
+    "characterId": "otras",
+    "src": "Multimedia/otrov (1).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-otras-57",
+    "characterId": "otras",
+    "src": "Multimedia/otrov (2).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-otras-58",
+    "characterId": "otras",
+    "src": "Multimedia/otrov (3).mp4",
+    "type": "video"
+  },
+{
+    "id": "m-priscila-1",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-priscila-2",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-priscila-3",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-priscila-4",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-priscila-5",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-priscila-6",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-priscila-7",
+    "characterId": "priscila-techera",
+    "src": "Multimedia/priscilatecheraj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-1",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-2",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-3",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-4",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-5",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-6",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-7",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-8",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-9",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-10",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-11",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-12",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-guadalupe-13",
+    "characterId": "guadalupe-narvaez",
+    "src": "Multimedia/guadalupenarvaezj (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-1",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-2",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-3",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-4",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-5",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-6",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-7",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-8",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-9",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-10",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-11",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-12",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-13",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-14",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (14).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-sofia-15",
+    "characterId": "sofia-alegre",
+    "src": "Multimedia/sofiaalegrej (15).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-1",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-2",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-3",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-4",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-5",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-6",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-7",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-8",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-9",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-milagros-10",
+    "characterId": "milagros-olivares",
+    "src": "Multimedia/milagrosolviaresj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-1",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-2",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-3",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-4",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-5",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-6",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-7",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-8",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-9",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-10",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-11",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-12",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-13",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-14",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (14).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-15",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (15).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-16",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (16).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-17",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (17).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-18",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (18).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-19",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (19).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-20",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (20).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-21",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (21).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-22",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (22).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-23",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (23).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-24",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (24).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-25",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (25).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-26",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (26).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-27",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (27).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-28",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (28).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-29",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (29).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-30",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (30).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-31",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (31).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-32",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (32).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-33",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (33).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-34",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (34).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-35",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (35).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-36",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (36).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-37",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosaj (37).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-valentina-38",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (1).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-39",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (2).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-40",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (3).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-41",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (4).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-42",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (5).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-43",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (6).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-44",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (7).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-valentina-45",
+    "characterId": "valentina-barbosa",
+    "src": "Multimedia/valentinabarbosav (8).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-ailin-1",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-2",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-3",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-4",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-5",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-6",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-7",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-8",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-9",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-10",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-11",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-12",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-13",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-14",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (14).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-15",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (15).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-16",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (16).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-17",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (17).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-18",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (18).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-19",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (19).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-20",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (20).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-21",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (21).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-22",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (22).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-23",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (23).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-24",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (24).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-25",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (25).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-26",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (26).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-27",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (27).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-28",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (28).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-29",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (29).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-30",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (30).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-31",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (31).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-32",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (32).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-33",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (33).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-ailin-34",
+    "characterId": "ailin-mayorga",
+    "src": "Multimedia/ailinmayorgaj (34).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-1",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-2",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-3",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-4",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-5",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-6",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-7",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-8",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-9",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-10",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-11",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-12",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-fiamma-13",
+    "characterId": "fiamma-allisiardi",
+    "src": "Multimedia/fiammaallisiardij (13).jpg",
+    "type": "image"
+  },
+     {
       "id": "m-ariana-1",
-      "characterId": "ariana-grande",
-      "src": "https://media.tenor.com/VSITn9fEIEgAAAAM/ass-hot.gif",
-      "type": "gif"
-    },
-    {
-      "id": "m-ariana-2",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (1).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-3",
+      "id": "m-ariana-2",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (2).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-4",
+      "id": "m-ariana-3",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (3).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-5",
+      "id": "m-ariana-4",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (4).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-6",
+      "id": "m-ariana-5",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (5).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-7",
+      "id": "m-ariana-6",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (6).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-8",
+      "id": "m-ariana-7",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (7).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-9",
+      "id": "m-ariana-8",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (8).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-10",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (1).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-11",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (2).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-12",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (3).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-13",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (4).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-14",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (5).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-15",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (6).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-16",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (7).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-17",
-      "characterId": "ariana-grande",
-      "src": "Multimedia/arianagrandeg (8).gif",
-      "type": "image"
-    },
-    {
-      "id": "m-ariana-18",
+      "id": "m-ariana-9",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (9).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-19",
+      "id": "m-ariana-10",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (10).jpg",
       "type": "image"
     },
     {
-      "id": "m-ariana-20",
+      "id": "m-ariana-11",
       "characterId": "ariana-grande",
       "src": "Multimedia/arianagrandej (11).jpg",
       "type": "image"
+    },
+    {
+      "id": "m-ariana-12",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandej (12).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-13",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandej (13).jpg",
+      "type": "image"
+   },
+   {
+      "id": "m-ariana-14",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandej (14).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-15",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (1).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-16",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (2).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-17",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (3).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-18",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (4).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-19",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (5).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-20",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (6).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-21",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (7).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-22",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandeg (8).gif",
+      "type": "image"
+    },
+    {
+      "id": "m-ariana-23",
+      "characterId": "ariana-grande",
+      "src": "Multimedia/arianagrandev (1).mp4",
+      "type": "video"
     },
     {
       "id": "m-nicki-1",
@@ -132,55 +1320,55 @@
       "src": "Multimedia/nickinicolej (2).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-3",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (3).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-4",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (4).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-5",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (5).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-6",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (6).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-7",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (7).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-8",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (8).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-9",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (9).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-10",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (10).jpg",
       "type": "image"
     },
-{
+    {
       "id": "m-nicki-11",
       "characterId": "nicki-nicole",
       "src": "Multimedia/nickinicolej (11).jpg",
@@ -199,42 +1387,42 @@
       "type": "image"
     },
     {
-"id": "m-sabrina-1",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterj (1).jpg",
-"type": "image"
-},
-{
-"id": "m-sabrina-2",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterj (2).jpg",
-"type": "image"
-},
-{
-"id": "m-sabrina-3",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterj (3).jpg",
-"type": "image"
-},
-{
-"id": "m-sabrina-4",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterj (4).jpg",
-"type": "image"
-},
-{
-"id": "m-sabrina-5",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterj (5).jpg",
-"type": "image"
-},
-{
-"id": "m-sabrina-6",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterj (6).jpg",
-"type": "image"
-},
-{
+	"id": "m-sabrina-1",
+	"characterId": "sabrina-carpenter",
+	"src": "Multimedia/sabrinacarpenterj (1).jpg",
+	"type": "image"
+    },
+    {
+	"id": "m-sabrina-2",
+	"characterId": "sabrina-carpenter",
+	"src": "Multimedia/sabrinacarpenterj (2).jpg",
+	"type": "image"
+    },
+    {
+	"id": "m-sabrina-3",
+	"characterId": "sabrina-carpenter",
+	"src": "Multimedia/sabrinacarpenterj (3).jpg",
+	"type": "image"
+    },
+    {
+	"id": "m-sabrina-4",
+	"characterId": "sabrina-carpenter",
+	"src": "Multimedia/sabrinacarpenterj (4).jpg",
+	"type": "image"
+    },
+    {
+	"id": "m-sabrina-5",
+	"characterId": "sabrina-carpenter",
+	"src": "Multimedia/sabrinacarpenterj (5).jpg",
+	"type": "image"
+   },
+   {
+	"id": "m-sabrina-6",
+	"characterId": "sabrina-carpenter",
+	"src": "Multimedia/sabrinacarpenterj (6).jpg",
+	"type": "image"
+   },
+   {
 "id": "m-sabrina-7",
 "characterId": "sabrina-carpenter",
 "src": "Multimedia/sabrinacarpenterj (7).jpg",
@@ -396,53 +1584,1493 @@
 "src": "Multimedia/sabrinacarpenterg (9).gif",
 "type": "image"
 },
-{
-"id": "m-sabrina-34",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrnaicarpenterg (10).gif",
-"type": "image"
-},
-{
-"id": "m-sabrina-35",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterg (11).gif",
-"type": "image"
-},
-{
-"id": "m-sabrina-36",
-"characterId": "sabrina-carpenter",
-"src": "Multimedia/sabrinacarpenterg (12).gif",
-"type": "image"
-},
     {
-"id": "m-sabrina-37",
+"id": "m-sabrina-34",
 "characterId": "sabrina-carpenter",
 "src": "Multimedia/sabrinacarpenterv (1).mp4",
 "type": "video"
 },
 {
-"id": "m-sabrina-38",
+"id": "m-sabrina-35",
 "characterId": "sabrina-carpenter",
 "src": "Multimedia/sabrinacarpenterv (2).mp4",
 "type": "video"
 },
 {
-"id": "m-sabrina-39",
+"id": "m-sabrina-36",
 "characterId": "sabrina-carpenter",
 "src": "Multimedia/sabrinacarpenterv (3).mp4",
 "type": "video"
 },
 {
-"id": "m-sabrina-40",
+"id": "m-sabrina-37",
 "characterId": "sabrina-carpenter",
 "src": "Multimedia/sabrinacarpenterv (4).mp4",
 "type": "video"
 },
 {
-"id": "m-sabrina-41",
+"id": "m-sabrina-38",
 "characterId": "sabrina-carpenter",
 "src": "Multimedia/sabrinacarpenterv (5).mp4",
 "type": "video"
-}
+},
+	  {
+      "id": "m-emilia-1",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj (1).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-2",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (2).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-3",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (3).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-4",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (4).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-5",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (5).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-6",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (6).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-7",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (7).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-8",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (8).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-9",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (9).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-10",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emimernesj (9).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-11",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (11).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-12",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (12).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-13",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (13).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-14",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (14).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-15",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (15).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-16",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (16).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-17",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (17).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-18",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (18).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-emilia-19",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesj  (19).jpg",
+      "type": "image"
+    },
+        {
+      "id": "m-emilia-20",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesv  (7).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-emilia-21",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesv  (8).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-emilia-22",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesv  (9).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-emilia-23",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesv  (4).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-emilia-24",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesv  (5).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-emilia-25",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emiliamernesv  (6).mp4",
+      "type": "video"
+    },
+	  {
+      "id": "m-emilia-26",
+      "characterId": "emilia-mernes",
+      "src": "Multimedia/emimernesj (8).jpg",
+      "type": "image"
+    },
+
+	  {
+      "id": "m-becky-1",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (1).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-2",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (2).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-3",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (3).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-4",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (4).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-5",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (5).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-6",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (6).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-7",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (7).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-8",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (8).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-9",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (9).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-10",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (10).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-11",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (11).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-12",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygj (12).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-becky-13",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (1).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-14",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (2).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-15",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (3).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-16",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (4).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-17",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (5).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-18",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (6).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-19",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (7).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-20",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (8).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-21",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (9).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-becky-22",
+      "characterId": "becky-g",
+      "src": "Multimedia/beckygv (10).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-1",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (1).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-2",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (2).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-3",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (3).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-4",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (4).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-5",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (5).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-6",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (6).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-7",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasj (7).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-ana-8",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (1).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-9",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (2).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-10",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (3).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-11",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (4).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-12",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (5).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-13",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (6).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-14",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (7).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-15",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (8).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-16",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (9).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-17",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (10).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-18",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (11).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-19",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (12).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-20",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (13).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-ana-21",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (14).mp4",
+      "type": "video"
+    },
+	  {
+      "id": "m-ana-22",
+      "characterId": "ana-de-armas",
+      "src": "Multimedia/anadearmasv (15).mp4",
+      "type": "video"
+    }, 
+	  {
+      "id": "m-clara-17",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (1).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-18",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (2).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-19",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (3).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-20",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (4).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-21",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (5).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-22",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (6).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-23",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (7).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-8",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (8).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-9",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (9).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-10",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (10).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-11",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (11).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-12",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (12).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-13",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (13).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-clara-14",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallej (14).jpg",
+      "type": "image"
+    },
+	  {
+      "id": "m-clara-15",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallev (1).mp4",
+      "type": "video"
+    },
+	  {
+      "id": "m-clara-16",
+      "characterId": "clara-galle",
+      "src": "Multimedia/claragallev (2).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-1",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (1).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-2",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (2).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-3",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (3).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-4",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (4).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-5",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (5).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-6",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (6).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-7",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (7).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-8",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (8).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-9",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (9).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-10",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (10).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-11",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (11).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-12",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (12).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-13",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (13).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-14",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (14).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-15",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (15).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-16",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (16).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-17",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (17).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-18",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (18).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-19",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (19).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-20",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (20).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-21",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyj (21).jpg",
+      "type": "image"
+    },
+    {
+      "id": "m-sidney-22",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (1).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-23",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (2).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-24",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (3).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-25",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (4).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-26",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (5).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-27",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (6).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-28",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (7).mp4",
+      "type": "video"
+    },
+    {
+      "id": "m-sidney-29",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (8).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-30",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (9).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-31",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (10).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-32",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (11).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-33",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (12).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-34",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (13).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-35",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (14).mp4",
+      "type": "video"
+    },{
+      "id": "m-sidney-36",
+      "characterId": "sidney-sweeney",
+      "src": "Multimedia/sidneysweeneyv (15).mp4",
+      "type": "video"
+    },
+	  {
+      "id": "m-ester-1",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (1).jpg",
+      "type": "image"
+    }, {
+      "id": "m-ester-2",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (2).jpg",
+      "type": "image"
+    },
+     {
+      "id": "m-ester-3",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (3).jpg",
+      "type": "image"
+    }, {
+      "id": "m-ester-4",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (4).jpg",
+      "type": "image"
+    }, {
+      "id": "m-ester-5",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (5).jpg",
+      "type": "image"
+    }, {
+      "id": "m-ester-6",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (6).jpg",
+      "type": "image"
+    }, {
+      "id": "m-ester-7",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (7).jpg",
+      "type": "image"
+    }, {
+      "id": "m-ester-8",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositoj (1).gif",
+      "type": "image"
+    }, {
+      "id": "m-ester-9",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (1).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-10",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (2).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-11",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (3).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-12",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (4).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-13",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (5).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-14",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (6).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-15",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (7).mp4",
+      "type": "video"
+    }, {
+      "id": "m-ester-16",
+      "characterId": "ester-exposito",
+      "src": "Multimedia/esterexpositov (8).mp4",
+      "type": "video"
+    },
+  {
+    "id": "m-dua-1",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (1).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-2",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (2).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-3",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (3).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-4",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (4).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-5",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (5).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-6",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (6).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-7",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (7).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-8",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (8).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-9",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (9).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-10",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (10).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-11",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (11).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-12",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (12).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-13",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (13).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-14",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipag (14).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-15",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-16",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-17",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-18",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-19",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-20",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-21",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-22",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-23",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-24",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-25",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-26",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-27",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-28",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (14).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-29",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (15).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-30",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (16).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-31",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (17).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-32",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (18).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-33",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (19).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-34",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (20).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-35",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipaj (21).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-dua-36",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (1).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-dua-37",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (2).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-dua-38",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (3).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-dua-39",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (4).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-dua-40",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (5).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-dua-41",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (6).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-dua-42",
+    "characterId": "dua-lipa",
+    "src": "Multimedia/dualipav (7).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-olivia-1",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-2",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-3",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-4",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-5",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-6",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-7",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-8",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-olivia-9",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigov (1).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-olivia-10",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigov (2).mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-olivia-11",
+    "characterId": "olivia-rodrigo",
+    "src": "Multimedia/oliviarodrigoj (1).gif",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-1",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-2",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-3",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-4",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-5",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-6",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-7",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenaj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-anamena-8",
+    "characterId": "ana-mena",
+    "src": "Multimedia/anamenav.mp4",
+    "type": "video"
+  },
+  {
+    "id": "m-angela-1",
+    "characterId": "angela-torres",
+    "src": "Multimedia/angelatorresj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-angela-2",
+    "characterId": "angela-torres",
+    "src": "Multimedia/angelatorresj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-angela-3",
+    "characterId": "angela-torres",
+    "src": "Multimedia/angelatorresj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-angela-4",
+    "characterId": "angela-torres",
+    "src": "Multimedia/angelatorresj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-angela-5",
+    "characterId": "angela-torres",
+    "src": "Multimedia/angelatorresj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-angela-6",
+    "characterId": "angela-torres",
+    "src": "Multimedia/angelatorresj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-1",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-2",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-3",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-4",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-5",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-6",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-7",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-8",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-9",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-10",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-11",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-12",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-avril-13",
+    "characterId": "avril-lavigne",
+    "src": "Multimedia/avrillavignej (13).jpg",
+    "type": "image"
+  },
+{
+    "id": "m-clara-1",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-clara-2",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-clara-3",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-clara-4",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-clara-5",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-clara-6",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (6).jpg",
+    "type": "image"
+  }
+,
+  {
+    "id": "m-clara-7",
+    "characterId": "clara-ceschin",
+    "src": "Multimedia/claraceschinj (7).jpg",
+    "type": "image"
+  },
+	  {
+    "id": "m-aitana-1",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (1).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-2",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (2).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-3",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (3).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-4",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (4).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-5",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (5).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-6",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (6).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-7",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (7).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-8",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (8).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-9",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (9).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-10",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (10).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-11",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (11).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-12",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (12).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-13",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (13).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-14",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (14).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-15",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (15).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-16",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (16).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-17",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (17).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-18",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (18).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-19",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (19).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-20",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanaj (20).jpg",
+    "type": "image"
+  },
+  {
+    "id": "m-aitana-21",
+    "characterId": "aitana",
+    "src": "Multimedia/aitanav.mp4",
+    "type": "video"
+  }
+
   ]
 }

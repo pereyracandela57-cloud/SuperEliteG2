@@ -1,14 +1,17 @@
-const { useEffect, useMemo, useRef, useState } = React;
-
+const { useEffect, useMemo, useRef, useState, useCallback } = React;
 const GROUPS = [
     { id: 'cantantes', label: 'Cantantes', singular: 'Cantante', emoji: '🎤', color: '#2563eb', button: 'from-blue-400 via-blue-600 to-blue-900', border: 'border-blue-400', glow: 'shadow-blue-950/70' },
     { id: 'actrices', label: 'Actrices', singular: 'Actriz', emoji: '🎬', color: '#16a34a', button: 'from-green-400 via-green-600 to-green-900', border: 'border-green-400', glow: 'shadow-green-950/70' },
     { id: 'nsfw', label: 'NSFW', singular: 'NSFW', emoji: '🔥', color: '#dc2626', button: 'from-red-400 via-red-600 to-red-950', border: 'border-red-400', glow: 'shadow-red-950/70' },
-    { id: 'otros', label: 'Otros', singular: 'Otro', emoji: '⭐', color: '#ca8a04', button: 'from-yellow-300 via-yellow-500 to-yellow-800', border: 'border-yellow-300', glow: 'shadow-yellow-950/70' },
+    { id: 'otros', label: 'Otros', singular: 'Otro', emoji: '📖', color: '#ffffff', button: 'from-slate-100 via-slate-300 to-slate-500', border: 'border-slate-300', glow: 'shadow-slate-800/50' },
+    { id: 'modelo', label: 'Modelos', singular: 'Modelo', emoji: '👠', color: '#ec4899', button: 'from-pink-400 via-pink-600 to-pink-900', border: 'border-pink-400', glow: 'shadow-pink-950/70' },
+    { id: 'influencer', label: 'Influencers', singular: 'Influencer', emoji: '📱', color: '#eab308', button: 'from-yellow-400 via-yellow-600 to-yellow-900', border: 'border-yellow-400', glow: 'shadow-yellow-950/70' },
+    { id: 'bailarina', label: 'Bailarinas', singular: 'Bailarina', emoji: '🩰', color: '#a855f7', button: 'from-purple-400 via-purple-600 to-purple-900', border: 'border-purple-400', glow: 'shadow-purple-950/70' },
+    { id: 'atleta', label: 'Atletas', singular: 'Atleta', emoji: '⚽', color: '#f97316', button: 'from-orange-400 via-orange-600 to-orange-900', border: 'border-orange-400', glow: 'shadow-orange-950/70' },
 ];
 
 const EMPTY_FORM = {
-    name: '', birthDate: '', country: '', city: '', height: '', photo: '', group: 'cantantes'
+    name: '', birthDate: '', country: '', city: '', height: '', photo: '', group: 'cantantes', battlePhotos: {}
 };
 
 const STORAGE_KEY = 'supereliteg2-state-v1';
@@ -16,7 +19,17 @@ const DEFAULT_BATTLE_TAGS = ['Facciones', 'Ojos', 'Boca', 'Cabello', 'Cintura', 
 const DATA_URL = 'characters.json';
 const MEDIA_DATA_URL = 'media.json';
 const RATINGS_DATA_URL = 'calificaciones.json';
+const BATTLES_DATA_URL = 'Batallas.json';
+const BATTLES_DOWNLOAD_FILENAME = 'Batallas.txt';
+const BATTLE_PHOTOS_DATA_URL = 'battlePhotos.json';
 const CHARACTERS_API_URL = '/api/characters';
+const BATTLE_PHOTO_ROLES = [
+    { id: 'face', label: '👩', description: 'Rostro y etiquetas generales' },
+    { id: 'body', label: '👙', description: 'Cintura y Cuerpo' },
+    { id: 'back', label: '🍑', description: 'Cola y Piernas' },
+    { id: 'boobs', label: '🍒', description: 'Pecho / Pechos' },
+    { id: 'sexy', label: '👄', description: 'Sensualidad' },
+];
 
 const RATING_TAGS = [
     { id: 'facciones', label: 'Facciones' },
@@ -54,11 +67,50 @@ const fallbackPhoto = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
     </svg>
 `);
 
+const getCharacterPhotoSrc = (photo) => {
+    if (!photo) return fallbackPhoto;
+
+    // URL externa o data URI
+    if (photo.startsWith('http') || photo.startsWith('data:')) {
+        return photo;
+    }
+
+    // Ruta local explícita
+    if (
+        photo.startsWith('Multimedia/') ||
+        photo.startsWith('photoPersonaje/')
+    ) {
+        return photo;
+    }
+
+    // Compatibilidad con los personajes existentes
+    return `photoPersonaje/${photo}`;
+};
+
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const getGroup = (id) => GROUPS.find(group => group.id === id) || GROUPS[0];
 const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 const isGifSource = (src = '') => /^data:image\/gif/i.test(src) || /\.gif(?:[?#]|$)/i.test(src);
 const normalizeMediaType = (type, src = '') => isGifSource(src) ? 'gif' : (type === 'video' ? 'video' : 'image');
+const normalizeTextKey = (value = '') => String(value).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const isHeightBattleTag = (tag = '') => normalizeTextKey(tag) === 'altura';
+
+function getBattlePhotoRoleForTag(tag = '') {
+    const normalizedTag = normalizeTextKey(tag);
+    if (['cintura', 'cuerpo'].includes(normalizedTag)) return 'body';
+    if (['cola', 'piernas'].includes(normalizedTag)) return 'back';
+    if (['pecho', 'pechos'].includes(normalizedTag)) return 'boobs';
+    if (normalizedTag === 'sensualidad') return 'sexy';
+    return 'face';
+}
+
+function getBattlePhotoForCharacter(character, mediaItems = [], tag = '') {
+    const role = getBattlePhotoRoleForTag(tag);
+    const isSelectableImage = (item) => item && item.characterId === character.id && normalizeMediaType(item.type, item.src) !== 'video';
+    const selectedMedia = mediaItems.find(item => item.id === character?.battlePhotos?.[role] && isSelectableImage(item));
+    const faceMedia = role !== 'face' ? mediaItems.find(item => item.id === character?.battlePhotos?.face && isSelectableImage(item)) : null;
+    return { role, src: selectedMedia?.src || faceMedia?.src || getCharacterPhotoSrc(character.photo) };
+}
 
 function calculateAge(dateString) {
     if (!dateString) return '';
@@ -85,6 +137,7 @@ function normalizeCharacter(character) {
         ...character,
         group: character.group === 'actriz' ? 'actrices' : character.group,
         id: character.id || uid(),
+        battlePhotos: character.battlePhotos && typeof character.battlePhotos === 'object' ? character.battlePhotos : {},
     };
 }
 
@@ -114,8 +167,21 @@ async function loadRatingsFromJson() {
     }
 }
 
+// Nueva función para cargar la memoria global de fotos de batalla
+async function loadBattlePhotosFromJson() {
+    try {
+        const response = await fetch(BATTLE_PHOTOS_DATA_URL, { cache: 'no-store' });
+        if (!response.ok) return {};
+        const data = await response.json();
+        return data && typeof data === 'object' ? data : {};
+    } catch (error) {
+        console.warn('No se pudo cargar battlePhotos.json. Se usará la memoria local por defecto.', error);
+        return {};
+    }
+}
+
 function normalizeRatingKey(key = '') {
-    return String(key).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return normalizeTextKey(key);
 }
 
 function normalizeRatingValue(value) {
@@ -125,7 +191,8 @@ function normalizeRatingValue(value) {
 }
 
 function getRatingTag(tagId) {
-    return RATING_TAGS.find(tag => tag.id === tagId);
+    const normalizedTagId = normalizeRatingKey(tagId);
+    return RATING_TAGS.find(tag => [tag.id, tag.label, ...(tag.aliases || [])].map(normalizeRatingKey).includes(normalizedTagId));
 }
 
 function getRatingGroup(groupId) {
@@ -172,13 +239,16 @@ function getRankingScoreForOption(rating, option) {
     return rating.average || 0;
 }
 
-function getBattleTags(ratings = {}) {
+function getBattleTags(ratings = {}, battleResults = []) {
     const tags = new Set(DEFAULT_BATTLE_TAGS);
     Object.values(ratings).forEach(ratingSet => {
         if (!ratingSet || typeof ratingSet !== 'object') return;
         Object.entries(ratingSet).forEach(([tag, value]) => {
             if (typeof value === 'number' && Number.isFinite(value)) tags.add(tag);
         });
+    });
+    battleResults.forEach(result => {
+        if (result?.tag) tags.add(result.tag);
     });
     return Array.from(tags);
 }
@@ -190,6 +260,176 @@ function getBattlePairKey(firstId, secondId) {
 function hasBattleResult(battleResults, tag, firstId, secondId) {
     const pairKey = getBattlePairKey(firstId, secondId);
     return battleResults.some(result => result.tag === tag && result.pairKey === pairKey);
+}
+
+function getLatestDirectBattleForTag(battleResults, tag) {
+    return battleResults
+        .filter(result => result.tag === tag && !result.inherited)
+        .sort((first, second) => (second.createdAt || '').localeCompare(first.createdAt || ''))[0] || null;
+}
+
+function getNextOpponentAfterLastLoser(characters, battleResults, tag, championId, lastLoserId) {
+    let startIndex = characters.findIndex(character => character.id === lastLoserId);
+    if (startIndex === -1) startIndex = 0; // Evita errores si el perdedor ya no es elegible
+    
+    const total = characters.length;
+    if (total === 0) return null;
+    
+    for (let offset = 1; offset <= total; offset += 1) {
+        const currentIndex = (startIndex + offset) % total;
+        const candidate = characters[currentIndex];
+        if (!candidate || candidate.id === championId) continue;
+        if (!hasBattleResult(battleResults, tag, championId, candidate.id)) return candidate;
+    }
+    return null;
+}
+
+function getNextBattleForTag(characters, battleResults, tag, availableBattles) {
+    const latestDirectBattle = getLatestDirectBattleForTag(battleResults, tag);
+    const champion = latestDirectBattle ? characters.find(character => character.id === latestDirectBattle.winnerId) : null;
+    if (champion) {
+        const nextOpponent = getNextOpponentAfterLastLoser(characters, battleResults, tag, champion.id, latestDirectBattle.loserId);
+        if (nextOpponent) return [champion, nextOpponent];
+    }
+    return availableBattles[0] || null;
+}
+
+function completeTransitiveBattleResults(results, targetTag = null) {
+    const normalizedResults = results.map(normalizeBattleResult).filter(Boolean);
+    const existingByPair = new Map();
+    normalizedResults.forEach(result => existingByPair.set(`${result.tag}::${result.pairKey}`, result));
+
+    const tagsToComplete = targetTag ? [targetTag] : Array.from(new Set(normalizedResults.map(result => result.tag)));
+    tagsToComplete.forEach(tag => {
+        const adjacency = new Map();
+        normalizedResults.filter(result => result.tag === tag).forEach(result => {
+            if (!adjacency.has(result.winnerId)) adjacency.set(result.winnerId, new Set());
+            adjacency.get(result.winnerId).add(result.loserId);
+        });
+
+        Array.from(adjacency.keys()).forEach(winnerId => {
+            const visited = new Set();
+            const stack = Array.from(adjacency.get(winnerId) || []);
+            while (stack.length) {
+                const loserId = stack.pop();
+                if (visited.has(loserId) || loserId === winnerId) continue;
+                visited.add(loserId);
+                const pairKey = getBattlePairKey(winnerId, loserId);
+                const resultKey = `${tag}::${pairKey}`;
+                if (!existingByPair.has(resultKey)) {
+                    existingByPair.set(resultKey, {
+                        id: uid(),
+                        tag,
+                        winnerId,
+                        loserId,
+                        pairKey,
+                        inherited: true,
+                        createdAt: new Date().toISOString(),
+                    });
+                }
+                (adjacency.get(loserId) || []).forEach(nextLoserId => stack.push(nextLoserId));
+            }
+        });
+    });
+
+    return Array.from(existingByPair.values()).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+function addBattleResultWithInheritance(results, battle) {
+    const normalizedBattle = normalizeBattleResult(battle);
+    if (!normalizedBattle || hasBattleResult(results, normalizedBattle.tag, normalizedBattle.winnerId, normalizedBattle.loserId)) return results;
+    return completeTransitiveBattleResults([normalizedBattle, ...results], normalizedBattle.tag);
+}
+
+function calculateBattleRatings(characters, battleResults, tags) {
+    const ratingsByCharacter = characters.reduce((result, character) => ({ ...result, [character.id]: {} }), {});
+    const stats = new Map();
+    const ensureStats = (characterId, tag) => {
+        const key = `${characterId}::${tag}`;
+        if (!stats.has(key)) stats.set(key, { wins: 0, losses: 0 });
+        return stats.get(key);
+    };
+
+    battleResults.forEach(result => {
+        ensureStats(result.winnerId, result.tag).wins += 1;
+        ensureStats(result.loserId, result.tag).losses += 1;
+    });
+
+    characters.forEach(character => {
+        tags.forEach(tag => {
+            const { wins, losses } = ensureStats(character.id, tag);
+            const total = wins + losses;
+            ratingsByCharacter[character.id][tag] = total ? Number(((wins / total) * 100).toFixed(1)) : 0;
+        });
+    });
+
+    return ratingsByCharacter;
+}
+
+function parseJsonText(text) {
+    return JSON.parse(text);
+}
+
+function downloadTextFile(filename, payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
+
+
+async function loadBattlesFromJson() {
+    try {
+        const response = await fetch(BATTLES_DATA_URL, { cache: 'no-store' });
+        if (!response.ok) return [];
+        const text = await response.text();
+        return normalizeBattleResultsPayload(parseJsonText(text));
+    } catch (error) {
+        console.warn(`No se pudo cargar ${BATTLES_DATA_URL}.`, error);
+        return [];
+    }
+}
+
+function normalizeBattleResult(result) {
+    if (!result || typeof result !== 'object') return null;
+    const tag = String(result.tag || result.etiqueta || '').trim();
+    const winnerId = String(result.winnerId || result.ganadorId || result.ganador || '').trim();
+    const loserId = String(result.loserId || result.perdedorId || result.perdedor || '').trim();
+    if (!tag || !winnerId || !loserId || winnerId === loserId) return null;
+    return {
+        id: result.id || uid(),
+        tag,
+        winnerId,
+        loserId,
+        pairKey: getBattlePairKey(winnerId, loserId),
+        inherited: Boolean(result.inherited || result.heredada),
+        createdAt: result.createdAt || result.fecha || new Date().toISOString(),
+    };
+}
+
+function normalizeBattleResultsPayload(data) {
+    const source = Array.isArray(data) ? data : (Array.isArray(data?.battles) ? data.battles : (Array.isArray(data?.batallas) ? data.batallas : []));
+    const normalized = source.map(normalizeBattleResult).filter(Boolean);
+    const unique = new Map();
+    normalized.forEach(result => {
+        const key = `${result.tag}::${result.pairKey}`;
+        if (!unique.has(key)) unique.set(key, result);
+    });
+    return Array.from(unique.values());
+}
+
+function mergeBattleResults(...battleGroups) {
+    const unique = new Map();
+    battleGroups.flat().map(normalizeBattleResult).filter(Boolean).forEach(result => {
+        const key = `${result.tag}::${result.pairKey}`;
+        if (!unique.has(key)) unique.set(key, result);
+    });
+    return completeTransitiveBattleResults(Array.from(unique.values()));
 }
 
 async function loadMediaFromJson() {
@@ -251,6 +491,8 @@ function App() {
             let jsonCharacters = [];
             let jsonMedia = [];
             let jsonRatings = {};
+            let jsonBattleResults = [];
+            let jsonBattlePhotos = {};
             let storedCharacters = [];
             let storedMedia = [];
             let storedBattleResults = [];
@@ -275,22 +517,37 @@ function App() {
             }
 
             try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (stored) {
-                    const parsed = JSON.parse(stored);
-                    storedCharacters = parsed.characters || [];
-                    storedMedia = parsed.media || [];
-                    storedBattleResults = Array.isArray(parsed.battleResults) ? parsed.battleResults : [];
-                }
+                jsonBattleResults = await loadBattlesFromJson();
             } catch (error) {
-                console.error('No se pudo leer localStorage:', error);
+                console.error(error);
+            }
+
+            try {
+                jsonBattlePhotos = await loadBattlePhotosFromJson();
+            } catch (error) {
+                console.error(error);
             }
 
             if (!isMounted) return;
-            setCharacters(mergeCharacters(jsonCharacters, storedCharacters));
-            setMedia(mergeMedia(jsonMedia, storedMedia));
+            
+            // Unimos los personajes omitiendo los datos guardados en local
+            let initialCharacters = mergeCharacters(jsonCharacters, []);
+            
+            // Inyectamos automáticamente las fotos designadas desde battlePhotos.json si existen
+            if (Object.keys(jsonBattlePhotos).length > 0) {
+                initialCharacters = initialCharacters.map(char => ({
+                    ...char,
+                    battlePhotos: { 
+                        ...(char.battlePhotos || {}), 
+                        ...(jsonBattlePhotos[char.id] || {}) 
+                    }
+                }));
+            }
+
+            setCharacters(initialCharacters);
+            setMedia(mergeMedia(jsonMedia, []));
             setRatings(jsonRatings);
-            setBattleResults(storedBattleResults);
+            setBattleResults(mergeBattleResults(jsonBattleResults, []));
             setIsLoaded(true);
         }
 
@@ -299,16 +556,17 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (!isLoaded) return;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ media, battleResults }));
-    }, [media, battleResults, isLoaded]);
+        // Desactivado el guardado en localStorage para depender únicamente de los archivos JSON
+    }, [isLoaded]);
 
     const selectedGroup = view.groupId ? getGroup(view.groupId) : null;
     const selectedCharacter = view.characterId ? characters.find(character => character.id === view.characterId) : null;
     const groupCharacters = selectedGroup ? characters.filter(character => character.group === selectedGroup.id) : [];
-    const selectedCharacterMedia = selectedCharacter ? media.filter(item => item.characterId === selectedCharacter.id) : [];
-    const mediaWithCharacters = useMemo(() => media.map(item => ({ ...item, type: normalizeMediaType(item.type, item.src), character: characters.find(character => character.id === item.characterId) })).filter(item => item.character), [media, characters]);
-    const mediaCountByCharacter = useMemo(() => media.reduce((counts, item) => ({ ...counts, [item.characterId]: (counts[item.characterId] || 0) + 1 }), {}), [media]);
+    const selectedCharacterMedia = selectedCharacter ? media.filter(item => item.characterId === selectedCharacter.id && item.src && item.src.trim() !== '') : [];
+    const mediaWithCharacters = useMemo(() => media.filter(item => item.src && item.src.trim() !== '').map(item => ({ ...item, type: normalizeMediaType(item.type, item.src), character: characters.find(character => character.id === item.characterId) })).filter(item => item.character), [media, characters]);
+    const mediaCountByCharacter = useMemo(() => media.filter(item => item.src && item.src.trim() !== '').reduce((counts, item) => ({ ...counts, [item.characterId]: (counts[item.characterId] || 0) + 1 }), {}), [media]);
+    const battleTags = useMemo(() => getBattleTags(ratings, battleResults), [ratings, battleResults]);
+    const calculatedRatings = useMemo(() => calculateBattleRatings(characters, battleResults, battleTags), [characters, battleResults, battleTags]);
 
     const navigate = (nextView) => setView(nextView);
 
@@ -361,11 +619,19 @@ function App() {
     };
     const updatePlaybackSettings = (nextSettings) => setPlaybackSettings(prev => ({ ...prev, ...nextSettings }));
     const saveBattleResult = ({ tag, winnerId, loserId }) => {
-        setBattleResults(prev => {
-            if (hasBattleResult(prev, tag, winnerId, loserId)) return prev;
-            return [{ id: uid(), tag, winnerId, loserId, pairKey: getBattlePairKey(winnerId, loserId), createdAt: new Date().toISOString() }, ...prev];
-        });
+        setBattleResults(prev => addBattleResultWithInheritance(prev, { tag, winnerId, loserId, pairKey: getBattlePairKey(winnerId, loserId), createdAt: new Date().toISOString() }));
     };
+
+    const assignBattlePhoto = async (characterId, role, mediaId) => {
+        const nextCharacters = characters.map(character => character.id === characterId
+            ? { ...character, battlePhotos: { ...(character.battlePhotos || {}), [role]: mediaId } }
+            : character);
+        setCharacters(nextCharacters);
+        await persistCharacters(nextCharacters);
+    };
+
+    const downloadRatings = () => downloadTextFile('calificaciones.txt', calculatedRatings);
+    const downloadBattles = () => downloadTextFile(BATTLES_DOWNLOAD_FILENAME, { battles: battleResults });
 
     return (
         <div className="min-h-screen">
@@ -375,11 +641,11 @@ function App() {
                 {persistenceStatus && <div className="metal-panel metal-shadow mb-5 rounded-2xl border border-cyan-400/50 p-4 font-bold text-cyan-100">{persistenceStatus}</div>}
                 {view.page === 'characters' && <GroupsScreen onOpenGroup={(groupId) => navigate({ page: 'group', groupId })} />}
                 {view.page === 'gallery' && <GeneralGallery items={mediaWithCharacters} settings={playbackSettings} onSettingsChange={updatePlaybackSettings} onPlay={() => openPlayer(mediaWithCharacters, 'Galería general')} />}
-                {view.page === 'battles' && <BattlesScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} battleResults={battleResults} onBattleResult={saveBattleResult} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
-                {view.page === 'ranking' && <RankingScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={ratings} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
+                {view.page === 'battles' && <BattlesScreen characters={characters} media={media} mediaCountByCharacter={mediaCountByCharacter} ratings={calculatedRatings} battleResults={battleResults} onBattleResult={saveBattleResult} onDownloadRatings={downloadRatings} onDownloadBattles={downloadBattles} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
+                {view.page === 'ranking' && <RankingScreen characters={characters} mediaCountByCharacter={mediaCountByCharacter} ratings={calculatedRatings} onOpenProfile={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'group' && <GroupScreen group={selectedGroup} characters={groupCharacters} onBack={() => navigate({ page: 'characters' })} onAdd={() => openNewCharacter(selectedGroup.id)} onOpen={(id) => navigate({ page: 'profile', characterId: id })} />}
                 {view.page === 'profile' && selectedCharacter && <ProfileScreen character={selectedCharacter} mediaCount={selectedCharacterMedia.length} onBack={() => navigate({ page: 'group', groupId: selectedCharacter.group })} onGallery={() => navigate({ page: 'characterGallery', characterId: selectedCharacter.id })} onEdit={() => openEditCharacter(selectedCharacter)} onDelete={() => deleteCharacter(selectedCharacter.id)} />}
-                {view.page === 'characterGallery' && selectedCharacter && <CharacterGallery character={selectedCharacter} items={selectedCharacterMedia} settings={playbackSettings} onSettingsChange={updatePlaybackSettings} onPlay={(items) => openPlayer(items, `Galería de ${selectedCharacter.name}`)} onBack={() => navigate({ page: 'profile', characterId: selectedCharacter.id })} onAdd={() => setMediaModal({ character: selectedCharacter })} />}
+                {view.page === 'characterGallery' && selectedCharacter && <CharacterGallery character={selectedCharacter} items={selectedCharacterMedia} settings={playbackSettings} onSettingsChange={updatePlaybackSettings} onPlay={(items) => openPlayer(items, `Galería de ${selectedCharacter.name}`)} onBack={() => navigate({ page: 'profile', characterId: selectedCharacter.id })} onAdd={() => setMediaModal({ character: selectedCharacter })} onAssignBattlePhoto={assignBattlePhoto} />}
             </main>
             {characterModal && <CharacterFormModal initial={characterModal.character} onClose={() => setCharacterModal(null)} onSave={saveCharacter} />}
             {mediaModal && <MediaFormModal character={mediaModal.character} onClose={() => setMediaModal(null)} onSave={saveMedia} />}
@@ -412,8 +678,11 @@ function NavButton({ active, onClick, children }) {
     return <button onClick={onClick} className={`metal-button rounded-xl px-4 py-3 font-black transition ${active ? 'bg-gradient-to-br from-cyan-200 via-white to-slate-300 text-zinc-950' : 'bg-gradient-to-br from-slate-700 via-slate-900 to-black text-white hover:bg-white/10'}`}>{children}</button>;
 }
 
-function BattleCard({ character, score, mediaCount, tag, onChooseWinner, onOpenProfile }) {
+function BattleCard({ character, score, mediaCount, tag, mediaItems, onChooseWinner, onOpenProfile }) {
     const group = getGroup(character.group);
+    const battlePhoto = getBattlePhotoForCharacter(character, mediaItems, tag);
+    const roleLabel = BATTLE_PHOTO_ROLES.find(role => role.id === battlePhoto.role)?.label || 'Face';
+    const showHeight = isHeightBattleTag(tag);
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
@@ -422,19 +691,21 @@ function BattleCard({ character, score, mediaCount, tag, onChooseWinner, onOpenP
     };
 
     return (
-        <article onClick={() => onChooseWinner(character.id)} onKeyDown={handleKeyDown} role="button" tabIndex="0" aria-label={`Dar como ganador a ${character.name} en ${tag}`} className={`metal-card metal-shadow illuminated-card cursor-pointer overflow-hidden rounded-[2rem] border-2 transition hover:-translate-y-1 hover:brightness-110 ${group.border}`}>
-            <div className="relative h-80 bg-black/40">
-                <img src={character.photo || fallbackPhoto} alt={character.name} className="h-full w-full object-cover" />
-                <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/65 px-4 py-2 text-sm font-black uppercase tracking-[.25em] text-cyan-100">Elegir ganador</span>
+        <article onClick={() => onChooseWinner(character.id)} onKeyDown={handleKeyDown} role="button" tabIndex="0" aria-label={`Dar como ganador a ${character.name} en ${tag}`} className={`battle-card metal-card metal-shadow illuminated-card cursor-pointer overflow-hidden rounded-[2rem] border-2 transition hover:-translate-y-1 hover:brightness-110 ${group.border}`}>
+            <div className="battle-card-media relative h-80 bg-black/40 flex items-center justify-center p-2">
+                <img src={battlePhoto.src} alt={`${character.name} - ${roleLabel}`} className="h-full w-full object-contain" />
+                <span className="battle-card-action absolute left-4 top-4 rounded-full border border-white/30 bg-black/65 px-4 py-2 text-sm font-black uppercase tracking-[.25em] text-cyan-100">Elegir ganador</span>
+                <span className="absolute right-4 top-4 rounded-full border border-cyan-200/40 bg-cyan-950/75 px-4 py-2 text-xs font-black uppercase tracking-[.2em] text-cyan-100">Foto {roleLabel}</span>
+                {showHeight && <div className="absolute bottom-4 left-4 right-4 rounded-3xl border border-white/25 bg-black/70 p-4 text-center backdrop-blur"><p className="text-xs font-black uppercase tracking-[.25em] text-cyan-100/75">Altura del perfil</p><p className="letter-relief mt-1 text-5xl">{character.height || '—'}</p></div>}
             </div>
-            <div className="grid gap-4 p-5">
+            <div className="battle-card-body grid gap-4 p-5">
                 <div>
                     <p className="text-sm font-black uppercase tracking-[.25em]" style={{ color: group.color }}>{group.emoji} {group.label}</p>
-                    <h3 className="letter-relief texture-text mt-2 text-4xl uppercase">{character.name}</h3>
+                    <h3 className="battle-card-title letter-relief texture-text mt-2 text-4xl uppercase">{character.name}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                     <Info label="Puntaje" value={Number.isFinite(score) ? score.toFixed(1) : '0.0'} />
-                    <Info label="Multimedia" value={mediaCount} />
+                    {showHeight ? <Info label="Altura" value={character.height || '—'} /> : <Info label="Multimedia" value={mediaCount} />}
                 </div>
                 <button onClick={(event) => { event.stopPropagation(); onOpenProfile(character.id); }} className="metal-button rounded-2xl bg-gradient-to-br from-fuchsia-400 via-purple-600 to-indigo-950 px-5 py-4 font-black">Ver ficha</button>
             </div>
@@ -442,39 +713,66 @@ function BattleCard({ character, score, mediaCount, tag, onChooseWinner, onOpenP
     );
 }
 
-function BattlesScreen({ characters, mediaCountByCharacter, ratings, battleResults, onBattleResult, onOpenProfile }) {
-    const tags = useMemo(() => getBattleTags(ratings), [ratings]);
+function BattlesScreen({ characters, media, mediaCountByCharacter, ratings, battleResults, onBattleResult, onDownloadRatings, onDownloadBattles, onOpenProfile }) {
+    const tags = useMemo(() => getBattleTags(ratings, battleResults), [ratings, battleResults]);
     const [selectedTag, setSelectedTag] = useState(tags[0] || 'Facciones');
 
     useEffect(() => {
         if (!tags.includes(selectedTag)) setSelectedTag(tags[0] || 'Facciones');
     }, [tags, selectedTag]);
 
+    // Filtramos para que solo compitan los que tengan asignada una foto para EL ROL ESPECÍFICO de esta etiqueta
+    const eligibleCharacters = useMemo(() => {
+        const role = getBattlePhotoRoleForTag(selectedTag);
+        return characters.filter(character => {
+            // Si la categoría requiere el rostro ('face'), le permitimos competir 
+            // tanto si tiene una battlePhoto elegida como si tiene una foto de perfil asignada
+            if (role === 'face') {
+                const tieneFotoPerfil = character.photo;
+                const tieneFotoBatallaFace = character.battlePhotos && character.battlePhotos.face;
+                return tieneFotoBatallaFace || tieneFotoPerfil;
+            }
+            
+            // Para cualquier otro rol (body, back, etc.), sigue requiriendo la foto específica
+            return character.battlePhotos && character.battlePhotos[role];
+        });
+    }, [characters, selectedTag]);
+
     const availableBattles = useMemo(() => {
         const battles = [];
-        for (let firstIndex = 0; firstIndex < characters.length; firstIndex += 1) {
-            for (let secondIndex = firstIndex + 1; secondIndex < characters.length; secondIndex += 1) {
-                const first = characters[firstIndex];
-                const second = characters[secondIndex];
+        for (let firstIndex = 0; firstIndex < eligibleCharacters.length; firstIndex += 1) {
+            for (let secondIndex = firstIndex + 1; secondIndex < eligibleCharacters.length; secondIndex += 1) {
+                const first = eligibleCharacters[firstIndex];
+                const second = eligibleCharacters[secondIndex];
                 if (!hasBattleResult(battleResults, selectedTag, first.id, second.id)) battles.push([first, second]);
             }
         }
         return battles;
-    }, [characters, battleResults, selectedTag]);
+    }, [eligibleCharacters, battleResults, selectedTag]);
 
-    const completedForTag = Math.max(0, (characters.length * (characters.length - 1)) / 2 - availableBattles.length);
-    const contenders = availableBattles[0] || [];
-    const chooseWinner = (winnerId) => {
-        if (contenders.length < 2) return;
+    const nextBattle = useMemo(() => getNextBattleForTag(eligibleCharacters, battleResults, selectedTag, availableBattles), [eligibleCharacters, battleResults, selectedTag, availableBattles]);
+    const completedForTag = Math.max(0, (eligibleCharacters.length * (eligibleCharacters.length - 1)) / 2 - availableBattles.length);
+    const contenders = useMemo(() => {
+        return nextBattle || [];
+    }, [nextBattle]);
+
+    const chooseWinner = useCallback((winnerId) => {
+        if (!contenders || contenders.length < 2) return;
+        
         const loser = contenders.find(character => character.id !== winnerId);
         if (!loser) return;
-        onBattleResult({ tag: selectedTag, winnerId, loserId: loser.id });
-    };
+        
+        onBattleResult({ 
+            tag: selectedTag, 
+            winnerId: winnerId, 
+            loserId: loser.id 
+        });
+    }, [contenders, selectedTag, onBattleResult]);
 
     return (
         <section>
-            <SectionTitle eyebrow="Arena Elite" title="Batallas" description="Elige una etiqueta y toca la tarjeta del personaje que gana. Esa pareja no volverá a repetirse en la misma etiqueta, pero sí puede competir en las demás." />
-            {characters.length < 2 ? <EmptyState title="Faltan participantes" text="Agrega al menos dos personajes para preparar una batalla." /> : (
+            <SectionTitle eyebrow="Arena Elite" title="Batallas" description={`Elige una etiqueta y toca la tarjeta ganadora. Solo competirán los personajes que tengan asignada una foto específica para esta categoría.`} />
+            {characters.length < 2 ? <EmptyState title="Faltan participantes" text="Agrega al menos dos personajes en el sistema para preparar una batalla." /> : (
                 <div className="grid gap-5">
                     <div className="metal-panel metal-shadow chrome-border grid gap-4 rounded-3xl p-5 md:grid-cols-[1fr_auto] md:items-end">
                         <label className="grid gap-2 font-black uppercase tracking-[.2em] text-cyan-100">
@@ -487,15 +785,31 @@ function BattlesScreen({ characters, mediaCountByCharacter, ratings, battleResul
                             <Info label="Hechas" value={completedForTag} />
                             <Info label="Pendientes" value={availableBattles.length} />
                         </div>
+                        <div className="grid gap-3 md:col-span-2 lg:grid-cols-2">
+                            <button onClick={onDownloadRatings} className="metal-button rounded-2xl bg-gradient-to-br from-cyan-300 via-blue-600 to-blue-950 px-5 py-3 font-black">⬇ Descargar calificaciones</button>
+                            <button onClick={onDownloadBattles} className="metal-button rounded-2xl bg-gradient-to-br from-emerald-300 via-emerald-600 to-emerald-950 px-5 py-3 font-black">⬇ Descargar {BATTLES_DOWNLOAD_FILENAME}</button>
+                        </div>
                     </div>
-                    {contenders.length < 2 ? <EmptyState title="Etiqueta completada" text={`Ya se jugaron todas las batallas posibles en ${selectedTag}. Elige otra etiqueta para continuar.`} /> : (
-                        <div className="grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-                            <BattleCard character={contenders[0]} tag={selectedTag} score={(ratings[contenders[0].id] || {})[selectedTag]} mediaCount={mediaCountByCharacter[contenders[0].id] || 0} onChooseWinner={chooseWinner} onOpenProfile={onOpenProfile} />
-                            <div className="metal-panel metal-shadow chrome-border rounded-full px-8 py-6 text-center">
+                    
+                    {/* Estados vacíos adaptados para los personajes elegibles */}
+                    {eligibleCharacters.length < 2 ? (
+                        <EmptyState 
+                            title="Faltan competidores" 
+                            text={`No hay suficientes personajes con foto asignada para el rol de esta etiqueta (${getBattlePhotoRoleForTag(selectedTag).toUpperCase()}). Ve a sus galerías y asigna las fotos de batalla para habilitarlos.`} 
+                        />
+                    ) : contenders.length < 2 ? (
+                        <EmptyState 
+                            title="Etiqueta completada" 
+                            text={`Ya se jugaron todas las batallas posibles en ${selectedTag} con los personajes habilitados. Asigna fotos a nuevos personajes o elige otra etiqueta para continuar.`} 
+                        />
+                    ) : (
+                        <div className="battle-duel grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+                            <BattleCard character={contenders[0]} tag={selectedTag} mediaItems={media} score={getRatingValue(ratings[contenders[0].id] || {}, selectedTag)} mediaCount={mediaCountByCharacter[contenders[0].id] || 0} onChooseWinner={chooseWinner} onOpenProfile={onOpenProfile} />
+                            <div className="vs-badge metal-panel metal-shadow chrome-border rounded-full px-8 py-6 text-center">
                                 <p className="cartoon-title text-6xl">VS</p>
                                 <p className="mt-1 text-xs font-black uppercase tracking-[.25em] text-cyan-100/80">{selectedTag}</p>
                             </div>
-                            <BattleCard character={contenders[1]} tag={selectedTag} score={(ratings[contenders[1].id] || {})[selectedTag]} mediaCount={mediaCountByCharacter[contenders[1].id] || 0} onChooseWinner={chooseWinner} onOpenProfile={onOpenProfile} />
+                            <BattleCard character={contenders[1]} tag={selectedTag} mediaItems={media} score={getRatingValue(ratings[contenders[1].id] || {}, selectedTag)} mediaCount={mediaCountByCharacter[contenders[1].id] || 0} onChooseWinner={chooseWinner} onOpenProfile={onOpenProfile} />
                         </div>
                     )}
                 </div>
@@ -505,48 +819,244 @@ function BattlesScreen({ characters, mediaCountByCharacter, ratings, battleResul
 }
 
 function RankingScreen({ characters, mediaCountByCharacter, ratings, onOpenProfile }) {
+    // 1. Estados para la pestaña actual y la opción de ranking
+    const [activeTab, setActiveTab] = useState('ranking'); // 'ranking' o 'campeonas'
     const [rankingOptionId, setRankingOptionId] = useState('general');
+    
+    // 2. Lógica Original del Ranking (Mantenida intacta)
     const selectedOption = RANKING_OPTIONS.find(option => option.id === rankingOptionId) || RANKING_OPTIONS[0];
+    const generalOption = RANKING_OPTIONS.find(option => option.id === 'general') || selectedOption;
+
     const rankedCharacters = characters.map(character => {
         const rating = getCharacterRating(character, ratings);
         const mediaCount = mediaCountByCharacter[character.id] || 0;
         const score = getRankingScoreForOption(rating, selectedOption);
-        return { character, rating, mediaCount, score };
+        const scoreGeneral = getRankingScoreForOption(rating, generalOption); // Para desempatar en campeonas
+        return { character, rating, mediaCount, score, scoreGeneral };
     }).sort((a, b) => b.score - a.score || a.character.name.localeCompare(b.character.name));
+
+    // 3. Lógica del Salón de Campeonas
+    const campeonasData = useMemo(() => {
+        if (!rankedCharacters.length) return null;
+
+        const findChampion = (filterFn, scoreFn = (item) => item.scoreGeneral) => {
+            let best = null;
+            let bestScore = -1;
+            rankedCharacters.forEach(item => {
+                if (filterFn(item)) {
+                    const currentScore = scoreFn(item);
+                    if (currentScore > bestScore) {
+                        best = item;
+                        bestScore = currentScore;
+                    }
+                }
+            });
+            return best;
+        };
+
+        // Función auxiliar para obtener el año
+        const getYear = (dateStr) => dateStr ? new Date(dateStr).getFullYear() : 0;
+
+        // A) Tronos
+        const maxima = findChampion(() => true);
+        const rostro = findChampion(() => true, item => getRankingScoreForOption(item.rating, RANKING_OPTIONS.find(o => o.id === 'rostro') || {id: 'rostro'}));
+        const fisico = findChampion(() => true, item => getRankingScoreForOption(item.rating, RANKING_OPTIONS.find(o => o.id === 'fisico') || {id: 'fisico'}));
+        const actitud = findChampion(() => true, item => getRankingScoreForOption(item.rating, RANKING_OPTIONS.find(o => o.id === 'actitud') || {id: 'actitud'}));
+
+        // B) EDADES (Usando tu campo birthDate)
+        const teen = findChampion(item => getYear(item.character.birthDate) >= 2000);
+        const reina = findChampion(item => {
+            const y = getYear(item.character.birthDate);
+            return y >= 1990 && y <= 1999;
+        });
+        const leyenda = findChampion(item => {
+            const y = getYear(item.character.birthDate);
+            return y >= 1970 && y <= 1989;
+        });
+
+        // C) NACIONALIDADES (Usando tu campo country)
+        const nats = Array.from(new Set(characters.map(c => c.country).filter(Boolean)));
+        const nacionalidades = nats.map(nat => ({
+            nationality: nat,
+            champion: findChampion(item => item.character.country === nat)
+        })).sort((a, b) => a.nationality.localeCompare(b.nationality));
+
+        // D) GRUPOS
+        const groupIds = Array.from(new Set(characters.map(c => c.group).filter(Boolean)));
+        const grupos = groupIds.map(gId => ({
+            groupObj: getGroup(gId),
+            champion: findChampion(item => item.character.group === gId)
+        }));
+
+        const parametros = RANKING_OPTIONS.filter(o => !['general', 'rostro', 'fisico', 'actitud'].includes(o.id)).map(opt => ({
+            option: opt,
+            champion: findChampion(() => true, item => getRankingScoreForOption(item.rating, opt))
+        }));
+
+        const allTags = new Set();
+        characters.forEach(c => { if (Array.isArray(c.tags)) c.tags.forEach(t => allTags.add(t)); });
+        const etiquetas = Array.from(allTags).map(tag => ({
+            tag,
+            champion: findChampion(item => Array.isArray(item.character.tags) && item.character.tags.includes(tag))
+        }));
+
+        return { maxima, rostro, fisico, actitud, teen, reina, leyenda, nacionalidades, grupos, parametros, etiquetas };
+    }, [rankedCharacters, characters, ratings]);
+    // Sub-componente de Tarjeta de Campeona
+    const ChampionCard = ({ title, entry, scoreLabel, scoreValue, highlight = false }) => (
+        <button
+            onClick={() => entry && onOpenProfile(entry.character.id)}
+            disabled={!entry}
+            className={`metal-card metal-shadow chrome-border grid gap-3 rounded-2xl p-4 text-center transition ${entry ? 'hover:-translate-y-1 hover:border-cyan-300/50 cursor-pointer' : 'opacity-50 grayscale'} ${highlight ? 'bg-gradient-to-b from-zinc-800 to-zinc-900 border-amber-500/50' : 'bg-zinc-900/50'}`}
+        >
+            <div className={`text-xs font-black uppercase tracking-[.15em] ${highlight ? 'text-amber-300' : 'text-cyan-200'} truncate`}>{title}</div>
+            {entry ? (
+                <>
+                    <img src={getCharacterPhotoSrc(entry.character.photo)} alt={entry.character.name} className={`mx-auto h-20 w-20 rounded-full object-cover border-2 ${highlight ? 'border-amber-400' : 'border-cyan-400'}`} />
+                    <div>
+                        <h4 className="font-bold text-white uppercase text-sm truncate">{entry.character.name}</h4>
+                        <p className="text-[10px] text-zinc-400">{entry.character.nationality || ' '} {entry.character.birthYear ? `(${entry.character.birthYear})` : ''}</p>
+                    </div>
+                    <div className="rounded-lg bg-black/40 p-2 border border-white/10">
+                        <span className="text-[10px] text-zinc-400 uppercase">{scoreLabel}:</span> <span className={`font-black ${highlight ? 'text-amber-400' : 'text-cyan-300'}`}>{typeof scoreValue === 'number' ? scoreValue.toFixed(1) : scoreValue}</span>
+                    </div>
+                </>
+            ) : (
+                 <div className="py-6 text-xs text-zinc-500 font-bold uppercase tracking-widest">Vacante</div>
+            )}
+        </button>
+    );
 
     return (
         <section>
-            <SectionTitle eyebrow="Tabla Elite" title="Ranking" description="Selecciona una etiqueta, un grupo o el puntaje general para reordenar automáticamente a las participantes por esa calificación." />
-            <div className="metal-panel metal-shadow chrome-border mb-6 grid gap-3 rounded-3xl p-5 sm:grid-cols-[1fr_auto]">
-                <div>
-                    <p className="text-sm font-black uppercase tracking-[.25em] text-cyan-200">Filtro de ranking</p>
-                    <p className="mt-1 text-sm font-semibold text-cyan-50/75">Las etiquetas sin calificación en el JSON cuentan como 0. Las puntuaciones se muestran de 0 a 100.</p>
-                </div>
-                <label className="grid gap-2 text-sm font-bold text-zinc-200 sm:min-w-72">Ver top por
-                    <select value={rankingOptionId} onChange={event => setRankingOptionId(event.target.value)} className="rounded-xl border border-white/20 bg-zinc-900 p-3 text-white shadow-inner outline-none focus:border-cyan-300">
-                        {RANKING_OPTIONS.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}
-                    </select>
-                </label>
+            <SectionTitle 
+                eyebrow={activeTab === 'ranking' ? "Tabla Elite" : "Salón de la Fama"} 
+                title={activeTab === 'ranking' ? "Ranking" : "Campeonas"} 
+                description={activeTab === 'ranking' ? "Selecciona una etiqueta, un grupo o el puntaje general para reordenar automáticamente a las participantes por esa calificación." : "Las monarcas absolutas de cada categoría, etiqueta, parámetro y país."} 
+            />
+            
+            {/* SWITCHER DE PESTAÑAS */}
+            <div className="metal-panel metal-shadow chrome-border mb-6 flex gap-2 rounded-3xl p-2 bg-zinc-900">
+                <button
+                    onClick={() => setActiveTab('ranking')}
+                    className={`flex-1 rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-wider transition ${activeTab === 'ranking' ? 'bg-cyan-600 text-white shadow-lg' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}
+                >
+                    📊 Clasificación
+                </button>
+                <button
+                    onClick={() => setActiveTab('campeonas')}
+                    className={`flex-1 rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-wider transition ${activeTab === 'campeonas' ? 'bg-amber-500 text-black shadow-lg' : 'text-zinc-400 hover:bg-white/5 hover:text-white'}`}
+                >
+                    🏆 Campeonas
+                </button>
             </div>
-            {rankedCharacters.length === 0 ? <EmptyState title="Ranking vacío" text="Agrega personajes para crear la tabla de posiciones." /> : (
-                <div className="grid gap-4">
-                    {rankedCharacters.map((entry, index) => {
-                        const group = getGroup(entry.character.group);
-                        return (
-                            <button key={entry.character.id} onClick={() => onOpenProfile(entry.character.id)} className="metal-card metal-shadow illuminated-card grid gap-4 rounded-3xl border border-white/20 p-4 text-left transition hover:-translate-y-1 sm:grid-cols-[auto_96px_1fr_auto] sm:items-center">
-                                <div className="cartoon-title text-5xl">#{index + 1}</div>
-                                <img src={entry.character.photo || fallbackPhoto} alt={entry.character.name} className="h-24 w-24 rounded-2xl object-cover" />
-                                <div>
-                                    <p className="text-xs font-black uppercase tracking-[.25em]" style={{ color: group.color }}>{group.emoji} {group.label}</p>
-                                    <h3 className="letter-relief texture-text mt-1 text-3xl uppercase">{entry.character.name}</h3>
+
+            {activeTab === 'ranking' ? (
+                /* ================= VISTA ORIGINAL ================= */
+                <>
+                    <div className="metal-panel metal-shadow chrome-border mb-6 grid gap-3 rounded-3xl p-5 sm:grid-cols-[1fr_auto]">
+                        <div>
+                            <p className="text-sm font-black uppercase tracking-[.25em] text-cyan-200">Filtro de ranking</p>
+                            <p className="mt-1 text-sm font-semibold text-cyan-50/75">Las etiquetas sin calificación en el JSON cuentan como 0. Las puntuaciones se muestran de 0 a 100.</p>
+                        </div>
+                        <label className="grid gap-2 text-sm font-bold text-zinc-200 sm:min-w-72">Ver top por
+                            <select value={rankingOptionId} onChange={event => setRankingOptionId(event.target.value)} className="rounded-xl border border-white/20 bg-zinc-900 p-3 text-white shadow-inner outline-none focus:border-cyan-300">
+                                {RANKING_OPTIONS.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}
+                            </select>
+                        </label>
+                    </div>
+
+                    {rankedCharacters.length === 0 ? <EmptyState title="Ranking vacío" text="Agrega personajes para crear la tabla de posiciones." /> : (
+                        <div className="grid gap-4">
+                            {rankedCharacters.map((entry, index) => {
+                                const group = getGroup(entry.character.group);
+                                return (
+                                    <button key={entry.character.id} onClick={() => onOpenProfile(entry.character.id)} className="metal-card metal-shadow illuminated-card grid gap-4 rounded-3xl border border-white/20 p-4 text-left transition hover:-translate-y-1 sm:grid-cols-[auto_96px_1fr_auto] sm:items-center">
+                                        <div className="cartoon-title text-5xl">#{index + 1}</div>
+                                        <img src={getCharacterPhotoSrc(entry.character.photo)} alt={entry.character.name} className="h-24 w-24 rounded-2xl object-cover" />
+                                        <div>
+                                            <p className="text-xs font-black uppercase tracking-[.25em]" style={{ color: group.color }}>{group.emoji} {group.label}</p>
+                                            <h3 className="letter-relief texture-text mt-1 text-3xl uppercase">{entry.character.name}</h3>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3 sm:min-w-64">
+                                            <Info label={selectedOption.label} value={entry.score.toFixed(1)} />
+                                            <Info label="Archivos" value={entry.mediaCount} />
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+                </>
+            ) : (
+                /* ================= VISTA CAMPEONAS ================= */
+                <div className="grid gap-8 animate-[fadeIn_0.3s_ease-out_forwards]">
+                    {rankedCharacters.length === 0 ? <EmptyState title="Sin Campeonas" text="Agrega personajes para generar a las campeonas." /> : (
+                        <>
+                            {/* TRONOS PRINCIPALES */}
+                            <div className="metal-panel metal-shadow chrome-border rounded-3xl p-5">
+                                <h3 className="text-sm font-black uppercase tracking-[.2em] text-amber-400 mb-4 border-b border-white/10 pb-2">👑 DIOSAS SUPREMAS</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <ChampionCard highlight title="DIOSA SUPREMA" entry={campeonasData.maxima} scoreLabel="General" scoreValue={campeonasData.maxima?.scoreGeneral} />
+                                    <ChampionCard title="DIOSA DE LA BELLEZA" entry={campeonasData.rostro} scoreLabel="Puntos" scoreValue={campeonasData.rostro ? getRankingScoreForOption(campeonasData.rostro.rating, {id:'rostro'}) : 0} />
+                                    <ChampionCard title="DIOSA DE LA SENSUALIDAD" entry={campeonasData.fisico} scoreLabel="Puntos" scoreValue={campeonasData.fisico ? getRankingScoreForOption(campeonasData.fisico.rating, {id:'fisico'}) : 0} />
+                                    <ChampionCard title="DIOSA DE LA SEDUCCIÓN" entry={campeonasData.actitud} scoreLabel="Puntos" scoreValue={campeonasData.actitud ? getRankingScoreForOption(campeonasData.actitud.rating, {id:'actitud'}) : 0} />
                                 </div>
-                                <div className="grid grid-cols-2 gap-3 sm:min-w-64">
-                                    <Info label={selectedOption.label} value={entry.score.toFixed(1)} />
-                                    <Info label="Archivos" value={entry.mediaCount} />
+                            </div>
+
+                            {/* EDADES */}
+                            <div className="metal-panel metal-shadow chrome-border rounded-3xl p-5">
+                                <h3 className="text-sm font-black uppercase tracking-[.2em] text-cyan-400 mb-4 border-b border-white/10 pb-2">⏳ REINAS DE ERAS</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <ChampionCard title="Promesa" entry={campeonasData.teen} scoreLabel="General" scoreValue={campeonasData.teen?.scoreGeneral} />
+                                    <ChampionCard title="Maestra" entry={campeonasData.reina} scoreLabel="General" scoreValue={campeonasData.reina?.scoreGeneral} />
+                                    <ChampionCard title="Leyenda" entry={campeonasData.leyenda} scoreLabel="General" scoreValue={campeonasData.leyenda?.scoreGeneral} />
                                 </div>
-                            </button>
-                        );
-                    })}
+                            </div>
+
+                            {/* GRUPOS / CATEGORIAS */}
+                            <div className="metal-panel metal-shadow chrome-border rounded-3xl p-5">
+                                <h3 className="text-sm font-black uppercase tracking-[.2em] text-green-400 mb-4 border-b border-white/10 pb-2">🎭 Monarcas por Grupo</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    {campeonasData.grupos.map(g => (
+                                        <ChampionCard key={g.groupObj.id} title={`${g.groupObj.emoji} ${g.groupObj.label}`} entry={g.champion} scoreLabel="General" scoreValue={g.champion?.scoreGeneral} />
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* NACIONALIDADES */}
+                            <div className="metal-panel metal-shadow chrome-border rounded-3xl p-5">
+                                <h3 className="text-sm font-black uppercase tracking-[.2em] text-purple-400 mb-4 border-b border-white/10 pb-2">🌍 Orgullo Nacional</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+                                    {campeonasData.nacionalidades.map(n => (
+                                        <ChampionCard key={n.nationality} title={`📍 ${n.nationality}`} entry={n.champion} scoreLabel="General" scoreValue={n.champion?.scoreGeneral} />
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* PARÁMETROS ESPECÍFICOS */}
+                            <div className="metal-panel metal-shadow chrome-border rounded-3xl p-5">
+                                <h3 className="text-sm font-black uppercase tracking-[.2em] text-rose-400 mb-4 border-b border-white/10 pb-2">🎯 Perfección por Parámetros</h3>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                    {campeonasData.parametros.map(p => (
+                                        <ChampionCard key={p.option.id} title={p.option.label} entry={p.champion} scoreLabel={p.option.label} scoreValue={p.champion ? getRankingScoreForOption(p.champion.rating, p.option) : 0} />
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* ETIQUETAS (TAGS) */}
+                            {campeonasData.etiquetas.length > 0 && (
+                                <div className="metal-panel metal-shadow chrome-border rounded-3xl p-5">
+                                    <h3 className="text-sm font-black uppercase tracking-[.2em] text-blue-400 mb-4 border-b border-white/10 pb-2">🏷️ Destacadas por Etiquetas</h3>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                        {campeonasData.etiquetas.map(t => (
+                                            <ChampionCard key={t.tag} title={t.tag} entry={t.champion} scoreLabel="General" scoreValue={t.champion?.scoreGeneral} />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             )}
         </section>
@@ -585,11 +1095,11 @@ function GroupScreen({ group, characters, onBack, onAdd, onOpen }) {
 
 function CharacterCard({ character, onClick }) {
     const group = getGroup(character.group);
-    return (
+   return (
         <button onClick={onClick} className={`metal-card metal-shadow illuminated-card rounded-3xl border-2 ${group.border} ${group.glow} overflow-hidden text-left transition hover:-translate-y-1`} style={{ boxShadow: `0 0 0 1px ${group.color}55, 0 20px 50px rgba(0,0,0,.38), inset 0 1px 1px rgba(255,255,255,.35)` }}>
             {/* Contenedor adaptado con fondo oscuro y alineación al centro */}
             <div className="relative h-72 overflow-hidden bg-zinc-950/40 flex items-center justify-center p-2">
-                <img src={character.photo || fallbackPhoto} alt={character.name} className="h-full w-full object-contain" />
+                <img src={getCharacterPhotoSrc(character.photo)} alt={character.name} className="h-full w-full object-contain" />
             </div>
             <div className="metal-panel illuminated-card p-5 text-zinc-100 flex flex-col gap-2" style={{ background: `linear-gradient(135deg, rgba(255,255,255,.25), rgba(0,0,0,.45)), ${group.color}` }}>
                 <h3 className="letter-relief texture-text line-clamp-1 text-2xl uppercase tracking-tight">{character.name}</h3>
@@ -610,7 +1120,7 @@ function ProfileScreen({ character, mediaCount, onBack, onGallery, onEdit, onDel
             <article className={`metal-card metal-shadow illuminated-card mx-auto max-w-4xl overflow-hidden rounded-[2rem] border-2 ${group.border}`}>
                 <div className="grid gap-0 md:grid-cols-[minmax(0,1fr)_1.2fr]">
                     <div className="bg-black/35 p-5">
-                        <img src={character.photo || fallbackPhoto} alt={character.name} className="h-[32rem] w-full rounded-[1.5rem] object-cover" />
+                        <img src={getCharacterPhotoSrc(character.photo)} alt={character.name} className="h-[32rem] w-full rounded-[1.5rem] object-cover" />
                     </div>
                     <div className="flex flex-col gap-6 p-6 md:p-8">
                         <div>
@@ -637,13 +1147,14 @@ function ProfileScreen({ character, mediaCount, onBack, onGallery, onEdit, onDel
     );
 }
 
-function CharacterGallery({ character, items, settings, onSettingsChange, onPlay, onBack, onAdd }) {
+function CharacterGallery({ character, items, settings, onSettingsChange, onPlay, onBack, onAdd, onAssignBattlePhoto }) {
     const galleryItems = items.map(item => ({ ...item, type: normalizeMediaType(item.type, item.src), character }));
     return (
         <section>
             <HeaderBar title={`Galería de ${character.name}`} onBack={onBack} actionLabel="Agregar archivo" onAction={onAdd} />
+            <BattlePhotoGuide battlePhotos={character.battlePhotos || {}} items={galleryItems} />
             <GalleryControls items={galleryItems} settings={settings} onSettingsChange={onSettingsChange} onPlay={() => onPlay(galleryItems)} />
-            <MediaGrid items={galleryItems} emptyText="Este personaje todavía no tiene multimedia." />
+            <MediaGrid items={galleryItems} emptyText="Este personaje todavía no tiene multimedia." battlePhotos={character.battlePhotos || {}} onAssignBattlePhoto={(role, mediaId) => onAssignBattlePhoto(character.id, role, mediaId)} />
         </section>
     );
 }
@@ -696,14 +1207,94 @@ function PlaybackSettingsPanel({ settings, onSettingsChange, compact = false }) 
     );
 }
 
-function MediaGrid({ items, emptyText }) {
+function BattlePhotoGuide({ battlePhotos, items }) {
+    const selectedByRole = BATTLE_PHOTO_ROLES.map(role => {
+        const selectedItem = items.find(item => item.id === battlePhotos[role.id]);
+        return { ...role, selectedItem };
+    });
+
+    // Función para descargar el archivo JSON de memoria
+    const handleDownloadMemory = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(battlePhotos, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        
+        // Intenta obtener el ID del personaje dinámicamente para nombrar el archivo
+        const characterId = items?.[0]?.characterId || 'personaje';
+        downloadAnchor.setAttribute("download", `battle_photos_${characterId}.json`);
+        
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    };
+
+    return (
+        <div className="metal-panel metal-shadow chrome-border mb-6 rounded-3xl p-5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <p className="text-sm font-black uppercase tracking-[.25em] text-cyan-200">Fotos para batallas</p>
+                    <p className="mt-1 text-sm font-semibold text-cyan-50/75">Marca una imagen de la galería como Face, Body, Back, Boobs o Sexy. Las batallas usarán la foto que corresponda a la etiqueta de competencia.</p>
+                </div>
+                <button 
+                    onClick={handleDownloadMemory}
+                    className="metal-button rounded-xl bg-gradient-to-br from-slate-500 via-slate-800 to-black p-3 flex items-center justify-center text-xl shadow-md border border-white/10 hover:bg-white/20 transition-all duration-200 shrink-0 w-12 h-12"
+                    title="Descargar memoria de asignación JSON"
+                >
+                    ⬇️
+                </button>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                {selectedByRole.map(role => (
+                    <div 
+                        key={role.id} 
+                        className={`rounded-xl border p-3 text-center flex flex-col justify-center shadow-inner transition-all duration-300 ${
+                            role.selectedItem 
+                                ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-green-950/50' 
+                                : 'bg-red-500/20 border-red-500/50 text-red-300 shadow-red-950/50'
+                        }`}
+                    >
+                        <span className="text-xs font-bold uppercase tracking-wider text-white/60">{role.label}</span>
+                        <span className="mt-1 text-sm font-black uppercase tracking-wide">
+                            {role.selectedItem ? '🟢 Asignada' : '🔴 Sin asignar'}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function MediaGrid({ items, emptyText, battlePhotos = null, onAssignBattlePhoto = null }) {
     if (!items.length) return <EmptyState title="Galería vacía" text={emptyText} />;
     return (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {items.map(item => (
                 <figure key={item.id} className="metal-card metal-shadow illuminated-card overflow-hidden rounded-3xl border border-white/20">
-                    {item.type === 'video' ? <video src={item.src} controls className="h-72 w-full bg-black object-cover" /> : <img src={item.src} alt={item.caption || item.character.name} className="h-72 w-full object-cover" />}
+                    {item.type === 'video' ? <video src={item.src} controls className="aspect-square w-full bg-black/60 object-contain" /> : <img src={item.src} alt={item.caption || item.character.name} className="aspect-square w-full bg-black/60 object-contain" />}
                     <figcaption className="letter-relief texture-text p-4 text-center text-2xl">{item.character.name}</figcaption>
+                    {onAssignBattlePhoto && (
+                        <div className="grid gap-2 border-t border-white/10 p-4">
+                            {item.type === 'video' ? <p className="text-center text-sm font-bold text-cyan-100/70">Solo las imágenes se pueden usar en tarjetas de batalla.</p> : (
+                                <div className="flex flex-row items-center justify-center gap-1.5 flex-nowrap mt-2">
+                                        {BATTLE_PHOTO_ROLES.map(role => {
+                                        const active = battlePhotos?.[role.id] === item.id;
+                                        return <button 
+                                                    key={role.id} 
+                                                    onClick={() => onAssignBattlePhoto(role.id, item.id)} 
+                                                    className={`rounded-xl border w-9 h-11 flex items-center justify-center text-xl transition-all duration-200 ${
+                                                        active 
+                                                            ? 'border-cyan-200 bg-cyan-300 text-zinc-950 scale-105 shadow-md shadow-cyan-300/30' 
+                                                            : 'border-white/15 bg-white/10 text-cyan-50 hover:bg-white/20 hover:scale-105'
+                                                    }`}
+                                                    title={role.label}
+                                                >
+                                                    {role.label}
+                                                </button>;
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </figure>
             ))}
         </div>
@@ -744,18 +1335,24 @@ function MediaPlayer({ items, title, settings, onSettingsChange, onClose }) {
     const [index, setIndex] = useState(0);
     const [playlist, setPlaylist] = useState(() => settings.shuffle ? shuffleItems(items) : items);
     const [showSettings, setShowSettings] = useState(false);
-    const [audioSrc, setAudioSrc] = useState('');
+    
+    // Estados para la música desde el JSON
+    const [audioList, setAudioList] = useState([]);
+    const [selectedAudio, setSelectedAudio] = useState("");
+
     const videoRef = useRef(null);
     const audioRef = useRef(null);
     const current = playlist[index] || playlist[0];
 
     const goNext = () => setIndex(prev => playlist.length ? (prev + 1) % playlist.length : 0);
 
+    // Efecto para barajar o reordenar la lista
     useEffect(() => {
         setPlaylist(settings.shuffle ? shuffleItems(items) : items);
         setIndex(0);
     }, [items, settings.shuffle]);
 
+    // Efecto para controlar los tiempos de reproducción de imágenes/videos/GIFs
     useEffect(() => {
         if (!current) return undefined;
         if (current.type === 'video') {
@@ -769,51 +1366,86 @@ function MediaPlayer({ items, title, settings, onSettingsChange, onClose }) {
         return () => window.clearTimeout(timer);
     }, [current?.id, settings.interval, playlist.length]);
 
+    // Efecto para cargar la lista de audios al iniciar
+    useEffect(() => {
+        fetch('./audio.json')
+            .then(res => res.json())
+            .then(data => {
+                // Codificamos la URL para que GitHub Pages lea bien los espacios y paréntesis
+                const safeData = data.map(audio => ({
+                    ...audio,
+                    src: encodeURI(audio.src)
+                }));
+                setAudioList(safeData);
+                if (safeData && safeData.length > 0) {
+                    setSelectedAudio(safeData[0].src);
+                }
+            })
+            .catch(err => console.error("Error cargando audio.json:", err));
+    }, []);
+    // Efecto para controlar la reproducción automática cuando cambia la canción seleccionada
     useEffect(() => {
         if (!audioRef.current) return;
-        audioRef.current.play().catch(() => {});
-    }, [audioSrc]);
-
-    useEffect(() => () => {
-        if (audioSrc) URL.revokeObjectURL(audioSrc);
-    }, [audioSrc]);
-
-    const pickAudio = (event) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-        if (audioSrc) URL.revokeObjectURL(audioSrc);
-        setAudioSrc(URL.createObjectURL(file));
-    };
+        if (selectedAudio) {
+            audioRef.current.load(); // Carga la nueva pista limpiamente
+            audioRef.current.play().catch(() => {});
+        } else {
+            audioRef.current.pause(); // Si elige "Sin música", se pausa
+        }
+    }, [selectedAudio]);
 
     if (!current) return null;
 
     return (
-        <div className="fixed inset-0 z-[60] bg-black text-white">
-            <div className="absolute left-4 right-4 top-4 z-20 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div className="rounded-2xl bg-black/55 p-4 backdrop-blur-md">
+        <div className="media-player fixed inset-0 z-[60] bg-black text-white">
+            <div className="media-player-bar absolute left-4 right-4 top-4 z-20 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="media-player-info rounded-2xl bg-black/55 p-4 backdrop-blur-md">
                     <p className="text-xs font-black uppercase tracking-[.25em] text-cyan-200">{title}</p>
                     <h2 className="mt-1 text-2xl font-black">{current.character?.name || current.caption}</h2>
-                    <p className="text-sm font-semibold text-zinc-300">{index + 1} / {playlist.length} · {current.type === 'video' ? 'Video: avanza al finalizar' : current.type === 'gif' ? 'GIF: avanza al finalizar' : `${settings.interval}s por foto`}</p>
+                    <p className="text-sm font-semibold text-zinc-300">
+                        {index + 1} / {playlist.length} · {current.type === 'video' ? 'Video: avanza al finalizar' : current.type === 'gif' ? 'GIF: avanza al finalizar' : `${settings.interval}s por foto`}
+                    </p>
                 </div>
-                <div className="flex flex-wrap justify-end gap-2">
-                    <label className="cursor-pointer rounded-2xl bg-white/15 px-4 py-3 font-black backdrop-blur-md hover:bg-white/25">🎵 Sonido
-                        <input type="file" accept="audio/*" onChange={pickAudio} className="hidden" />
-                    </label>
-                    <button onClick={() => onSettingsChange({ shuffle: !settings.shuffle })} className={`rounded-2xl px-4 py-3 font-black backdrop-blur-md ${settings.shuffle ? 'bg-cyan-400 text-zinc-950' : 'bg-white/15 hover:bg-white/25'}`}>🔀</button>
-                    <button onClick={() => setShowSettings(prev => !prev)} className="rounded-2xl bg-white/15 px-4 py-3 font-black backdrop-blur-md hover:bg-white/25">⚙</button>
-                    <button onClick={onClose} className="rounded-2xl bg-red-600 px-4 py-3 font-black hover:bg-red-500">✕</button>
+                
+                <div className="media-player-controls flex flex-wrap justify-end gap-2">
+                    {/* Selector de música dinámico */}
+                    <select 
+                        value={selectedAudio || ""} 
+                        onChange={(e) => setSelectedAudio(e.target.value)}
+                        className="media-control-button cursor-pointer rounded-2xl bg-white/15 px-4 py-3 font-black backdrop-blur-md hover:bg-white/25 text-white bg-zinc-900/40 border-none outline-none appearance-none"
+                    >
+                        <option value="" style={{color: '#000'}}>🚫 Sin música</option>
+                        {audioList.map((audio, idx) => (
+                            <option key={idx} value={audio.src} style={{color: '#000'}}>
+                                🎵 {audio.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <button onClick={() => onSettingsChange({ shuffle: !settings.shuffle })} className={`media-control-button rounded-2xl px-4 py-3 font-black backdrop-blur-md ${settings.shuffle ? 'bg-cyan-400 text-zinc-950' : 'bg-white/15 hover:bg-white/25'}`}>🔀</button>
+                    <button onClick={() => setShowSettings(prev => !prev)} className="media-control-button rounded-2xl bg-white/15 px-4 py-3 font-black backdrop-blur-md hover:bg-white/25">⚙</button>
+                    <button onClick={onClose} className="media-control-button rounded-2xl bg-red-600 px-4 py-3 font-black hover:bg-red-500">✕</button>
                 </div>
             </div>
-            {showSettings && <div className="absolute right-4 top-28 z-20 w-[min(28rem,calc(100vw-2rem))]"><PlaybackSettingsPanel settings={settings} onSettingsChange={onSettingsChange} /></div>}
-            <div className="flex h-full w-full items-center justify-center">
+
+            {showSettings && (
+                <div className="media-player-settings absolute right-4 top-28 z-20 w-[min(28rem,calc(100vw-2rem))]">
+                    <PlaybackSettingsPanel settings={settings} onSettingsChange={onSettingsChange} />
+                </div>
+            )}
+
+            <div className="media-player-stage relative flex h-full min-h-[40rem] w-full flex-1 items-center justify-center p-4">
                 {current.type === 'video' ? (
-                    <video ref={videoRef} key={current.id} src={current.src} controls autoPlay onEnded={goNext} className="max-h-full max-w-full object-contain" />
+                    <video key={current.src} ref={videoRef} src={current.src} autoPlay muted playsInline onEnded={goNext} className="media-player-content pointer-events-auto aspect-square max-h-[60vh] w-full max-w-xl rounded-[1.5rem] object-contain bg-black/60 shadow-2xl" />
                 ) : (
-                    <img key={current.id} src={current.src} alt={current.caption || current.character?.name || 'Multimedia'} className="max-h-full max-w-full object-contain" />
+                    <img src={current.src} alt="" className="media-player-content pointer-events-auto aspect-square max-h-[60vh] w-full max-w-xl rounded-[1.5rem] object-contain bg-black/60 shadow-2xl" />
                 )}
             </div>
-            <button onClick={goNext} className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/15 px-5 py-6 text-4xl font-black backdrop-blur-md hover:bg-white/25" aria-label="Siguiente multimedia">›</button>
-            {audioSrc && <audio ref={audioRef} src={audioSrc} loop controls className="absolute bottom-4 left-1/2 z-20 w-[min(36rem,calc(100vw-2rem))] -translate-x-1/2" />}
+
+            <button onClick={goNext} className="media-next-button absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/15 px-5 py-6 text-4xl font-black backdrop-blur-md hover:bg-white/25" aria-label="Siguiente multimedia">›</button>
+            
+            {/* Etiqueta de audio siempre lista y controlada por React */}
+            <audio ref={audioRef} src={selectedAudio || ""} loop />
         </div>
     );
 }
@@ -849,7 +1481,7 @@ function CharacterFormModal({ initial, onClose, onSave }) {
                 <label className="grid gap-2 text-sm font-bold text-zinc-200">Foto desde dispositivo
                     <input type="file" accept="image/*" onChange={onFile} className="rounded-xl border border-white/20 bg-black/30 p-3 text-white shadow-inner outline-none focus:border-cyan-300" />
                 </label>
-                {form.photo && <img src={form.photo} alt="Vista previa" className="h-40 w-full rounded-2xl object-cover" />}
+                {form.photo && <img src={getCharacterPhotoSrc(form.photo)} alt="Vista previa" className="h-40 w-full rounded-2xl object-cover" />}
                 <label className="grid gap-2 text-sm font-bold text-zinc-200">Grupo designado
                     <select value={form.group} onChange={event => setField('group', event.target.value)} className="rounded-xl border border-white/20 bg-zinc-900 p-3 text-white shadow-inner outline-none focus:border-cyan-300">
                         {GROUPS.map(group => <option key={group.id} value={group.id}>{group.label}</option>)}
